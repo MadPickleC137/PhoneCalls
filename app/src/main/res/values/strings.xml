@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Phone</string>
+    <string name="contacts">Контакты</string>
+    <string name="calls">Вызовы</string>
+</resources>
