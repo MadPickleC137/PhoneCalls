@@ -13,10 +13,11 @@ class CallsLogContentProvider(private val cr: ContentResolver) {
         CallLog.Calls.NUMBER,
         CallLog.Calls.TYPE,
         CallLog.Calls.DATE,
+        CallLog.Calls.CACHED_NAME,
         CallLog.Calls.DURATION
     )
 
-    private val cursor = cr.query(
+    private fun getCursor() = cr.query(
         CallLog.Calls.CONTENT_URI,
         projection,
         null,
@@ -25,8 +26,9 @@ class CallsLogContentProvider(private val cr: ContentResolver) {
     )
 
     fun getCalls(): List<ItemCallLog> {
-        cursor?.use {
+        getCursor()?.use {
             val idIndex = it.getColumnIndex(CallLog.Calls._ID)
+            val nameIndex = it.getColumnIndex(CallLog.Calls.CACHED_NAME)
             val numberIndex = it.getColumnIndex(CallLog.Calls.NUMBER)
             val typeIndex = it.getColumnIndex(CallLog.Calls.TYPE)
             val dateIndex = it.getColumnIndex(CallLog.Calls.DATE)
@@ -35,11 +37,12 @@ class CallsLogContentProvider(private val cr: ContentResolver) {
             while (it.moveToNext()) {
                 val id = it.getString(idIndex)
                 val number = it.getString(numberIndex)
+                val name: String? = it.getString(nameIndex)
                 val type = it.getInt(typeIndex)
                 val date = it.getLong(dateIndex)
                 val duration = it.getLong(durationIndex)
 
-                callLogList.add(ItemCallLog(id, number, type.getCallType(), date, duration))
+                callLogList.add(ItemCallLog(id, name, number, type.getCallType(), date, duration))
             }
         }
         return callLogList

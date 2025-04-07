@@ -38,6 +38,10 @@ private val DarkColorScheme = Colors(
     isLight = false
 )
 
+val MaterialTheme.card: Color
+    @Composable
+    get() = if (isSystemInDarkTheme()) SurfaceDark else Surface
+
 val MaterialTheme.text: Color
     @Composable
     get() = if (isSystemInDarkTheme()) OnPrimaryDark else OnPrimary

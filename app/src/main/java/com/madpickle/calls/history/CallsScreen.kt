@@ -9,14 +9,48 @@ import android.telephony.SubscriptionManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import com.madpickle.calls.ui.theme.PaddingItem
+import com.madpickle.calls.ui.theme.widgets.FullProgressBar
+import com.madpickle.calls.utils.grantedAll
 
 class CallsScreen: Screen {
     @Composable
     override fun Content() {
+        val context = LocalContext.current
+        val model = rememberScreenModel { CallsModel(context.contentResolver) }
+
         val launcherPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            if(permissions.grantedAll()) {
+                model.loadCalls()
+            }
+        }
+        val vs = model.viewState.collectAsState()
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(PaddingItem),
+            verticalArrangement = Arrangement.spacedBy(PaddingItem)
+        ) {
+            if(vs.value.loading) {
+                item {
+                    FullProgressBar(true)
+                }
+                return@LazyColumn
+            }
+            items(vs.value.logs) { log ->
+                ItemCallLogUI(log)
+            }
         }
 
         SideEffect {
