@@ -10,6 +10,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -44,12 +45,18 @@ class CallsScreen: Screen {
         ) {
             if(vs.value.loading) {
                 item {
-                    FullProgressBar(true)
+                    Box(
+                        Modifier.fillMaxSize()
+                    ) {
+                        FullProgressBar(true)
+                    }
                 }
                 return@LazyColumn
             }
             items(vs.value.logs) { log ->
-                ItemCallLogUI(log)
+                ItemCallLogUI(log) {
+                    model.callItemClick(log)
+                }
             }
         }
 

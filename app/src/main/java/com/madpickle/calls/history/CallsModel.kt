@@ -5,6 +5,7 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.madpickle.calls.data.ItemCallLog
 import com.madpickle.calls.domain.CallsLogContentProvider
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -18,13 +19,17 @@ class CallsModel(
     val viewState = _state.asStateFlow()
 
     fun loadCalls() {
-        screenModelScope.launch {
+        screenModelScope.launch(Dispatchers.IO) {
             val calls = callsProvider.getCalls()
             _state.value = viewState.value.copy(
                 loading = false,
                 logs = calls
             )
         }
+    }
+
+    fun callItemClick(log: ItemCallLog) {
+
     }
 }
 

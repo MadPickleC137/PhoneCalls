@@ -2,7 +2,10 @@ package com.madpickle.calls.main
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -24,6 +27,8 @@ import cafe.adriel.voyager.navigator.tab.TabDisposable
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.madpickle.calls.contacts.ContactsTab
 import com.madpickle.calls.history.CallsTab
+import com.madpickle.calls.ui.theme.navigationBar
+import com.madpickle.calls.ui.theme.topAppBar
 
 @Composable
 fun MainContent() {
@@ -37,11 +42,15 @@ fun MainContent() {
         }
     ) { tabNavigator ->
         Scaffold(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .systemBarsPadding()
+                .imePadding(),
             backgroundColor = MaterialTheme.colors.background,
             topBar = {
                 TopAppBar(
                     elevation = 4.dp,
-                    backgroundColor = MaterialTheme.colors.background,
+                    backgroundColor = MaterialTheme.topAppBar,
                     actions = {
                         IconButton(
                             onClick = {}
@@ -58,9 +67,9 @@ fun MainContent() {
                     }
                 )
             },
-            content = { paddingValues ->
+            content = { innerPadding ->
                 Box(
-                    modifier = Modifier.padding(paddingValues)
+                    modifier = Modifier.padding(innerPadding )
                 ) {
                     CurrentTab()
                 }
@@ -68,7 +77,7 @@ fun MainContent() {
             bottomBar = {
                 BottomNavigation(
                     elevation = 12.dp,
-                    backgroundColor = MaterialTheme.colors.surface
+                    backgroundColor = MaterialTheme.navigationBar
                 ) {
                     TabNavigationItem(CallsTab)
                     TabNavigationItem(ContactsTab)
