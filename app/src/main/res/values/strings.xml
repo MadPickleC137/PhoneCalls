@@ -2,4 +2,6 @@
     <string name="app_name">Phone</string>
     <string name="contacts">Контакты</string>
     <string name="calls">Вызовы</string>
+    <string name="keyboard_dial">Набрать</string>
+    <string name="add">Добавить</string>
 </resources>

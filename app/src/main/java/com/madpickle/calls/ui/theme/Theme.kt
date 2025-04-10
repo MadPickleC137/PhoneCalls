@@ -1,12 +1,10 @@
 package com.madpickle.calls.ui.theme
 
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 
 private val LightColorScheme = Colors(
     primary = Primary,
@@ -43,6 +41,10 @@ private val DarkColorScheme = Colors(
 val MaterialTheme.navigationBar: Color
     @Composable
     get() = if (isSystemInDarkTheme()) NavigationDark else Background
+
+val MaterialTheme.fab: Color
+    @Composable
+    get() = if (isSystemInDarkTheme()) FabDark else Fab
 
 val MaterialTheme.topAppBar: Color
     @Composable

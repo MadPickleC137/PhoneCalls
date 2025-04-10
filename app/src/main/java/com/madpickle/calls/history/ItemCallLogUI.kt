@@ -22,6 +22,9 @@ import androidx.compose.ui.unit.sp
 import com.madpickle.calls.R
 import com.madpickle.calls.data.CallType
 import com.madpickle.calls.data.ItemCallLog
+import com.madpickle.calls.ui.theme.ButtonElevation
+import com.madpickle.calls.ui.theme.CardItemShape
+import com.madpickle.calls.ui.theme.PaddingCardItem
 import com.madpickle.calls.ui.theme.cardItem
 import com.madpickle.calls.ui.theme.secondaryText
 import com.madpickle.calls.ui.theme.text
@@ -38,15 +41,10 @@ fun ItemCallLogUI(log: ItemCallLog, onItemClick: () -> Unit) {
 
     Button(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
+        shape = CardItemShape,
         onClick = onItemClick,
-        elevation = ButtonDefaults.elevation(
-            defaultElevation = 0.dp,
-            pressedElevation = 0.dp,
-            hoveredElevation = 0.dp,
-            focusedElevation = 0.dp
-        ),
-        contentPadding = PaddingValues(10.dp),
+        elevation = ButtonElevation,
+        contentPadding = PaddingCardItem,
         colors = ButtonDefaults.buttonColors(
             backgroundColor = MaterialTheme.cardItem
         )

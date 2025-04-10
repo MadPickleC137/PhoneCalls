@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.FabPosition
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -47,6 +48,7 @@ fun MainContent() {
                 .systemBarsPadding()
                 .imePadding(),
             backgroundColor = MaterialTheme.colors.background,
+            floatingActionButtonPosition = FabPosition.End,
             topBar = {
                 TopAppBar(
                     elevation = 4.dp,

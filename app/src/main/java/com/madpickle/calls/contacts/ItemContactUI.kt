@@ -1,0 +1,91 @@
+package com.madpickle.calls.contacts
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil3.compose.rememberAsyncImagePainter
+import com.madpickle.calls.data.ItemContact
+import com.madpickle.calls.ui.theme.ButtonElevation
+import com.madpickle.calls.ui.theme.CardItemShape
+import com.madpickle.calls.ui.theme.HeightItem
+import com.madpickle.calls.ui.theme.IconCornersShape
+import com.madpickle.calls.ui.theme.PaddingCardItem
+import com.madpickle.calls.ui.theme.cardItem
+import com.madpickle.calls.ui.theme.icon
+import com.madpickle.calls.ui.theme.secondaryText
+import com.madpickle.calls.ui.theme.text
+import java.io.File
+
+@Composable
+fun ItemContactUI(data: ItemContact, onClick: () -> Unit) {
+    Button(
+        modifier = Modifier.fillMaxWidth(),
+        shape = CardItemShape,
+        onClick = onClick,
+        elevation = ButtonElevation,
+        contentPadding = PaddingCardItem,
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = MaterialTheme.cardItem
+        )
+    ) {
+        if(data.imageUri.isNullOrEmpty()) {
+            Icon(
+                modifier = Modifier.size(HeightItem),
+                imageVector = Icons.Rounded.AccountCircle,
+                tint = MaterialTheme.icon,
+                contentDescription = ""
+            )
+        } else {
+            Box(Modifier.size(HeightItem).background(MaterialTheme.icon, IconCornersShape)) {
+                Image(
+                    painter = rememberAsyncImagePainter(File(data.imageUri)),
+                    contentDescription = "",
+                )
+            }
+        }
+        Column(
+            Modifier.fillMaxWidth().padding(start = 8.dp),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(data.name, color = MaterialTheme.text, fontSize = 16.sp)
+            Text(data.number, color = MaterialTheme.secondaryText, fontSize = 14.sp)
+        }
+    }
+}
+
+@Composable
+@Preview
+private fun ItemContactUIPreview() {
+    ItemContactUI(
+        ItemContact(
+            "Ivan Ivanocv",
+            "89984321123",
+            null,
+            2
+        )
+    ) {}
+}
