@@ -3,6 +3,7 @@ package com.madpickle.calls.history
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.telephony.SubscriptionInfo
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.core.app.ActivityCompat
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -28,7 +30,9 @@ import com.madpickle.calls.R
 import com.madpickle.calls.dial.DialScreen
 import com.madpickle.calls.ui.theme.PaddingItem
 import com.madpickle.calls.ui.theme.widgets.Fab
+import com.madpickle.calls.utils.getDefaultSim
 import com.madpickle.calls.utils.grantedAll
+import com.madpickle.calls.utils.makeCall
 
 class CallsScreen : Screen {
     @Composable
@@ -61,6 +65,15 @@ class CallsScreen : Screen {
             ) {
                 items(vs.value.logs) { log ->
                     ItemCallLogUI(log) {
+                        if (ActivityCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.CALL_PHONE
+                            ) == PackageManager.PERMISSION_GRANTED
+                        ) {
+                            context.getDefaultSim()?.let {
+                                context.makeCall(it, log.number)
+                            }
+                        }
                         model.callItemClick(log)
                     }
                 }

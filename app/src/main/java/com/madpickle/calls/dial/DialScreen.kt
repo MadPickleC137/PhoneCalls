@@ -58,7 +58,9 @@ import com.madpickle.calls.ui.theme.simCard
 import com.madpickle.calls.ui.theme.text
 import com.madpickle.calls.ui.theme.text2
 import com.madpickle.calls.utils.addPhoneTransformation
+import com.madpickle.calls.utils.getSimList
 import com.madpickle.calls.utils.isValidPhone
+import com.madpickle.calls.utils.makeCall
 import com.madpickle.calls.utils.removePhoneTransformation
 
 class DialScreen : Screen {
@@ -158,10 +160,10 @@ class DialScreen : Screen {
                         Manifest.permission.READ_PHONE_STATE
                     ) == PackageManager.PERMISSION_GRANTED
                 ) {
-                    getSimList(context)?.forEach { info ->
+                    context.getSimList()?.forEach { info ->
                         Button(
                             onClick = {
-                                makeCall(context, info, phone)
+                                context.makeCall(info, phone)
                             },
                             shape = buttonShape,
                             elevation = ButtonDefaults.elevation(
@@ -186,22 +188,5 @@ class DialScreen : Screen {
                 }
             }
         }
-    }
-
-    @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
-    private fun getSimList(context: Context): List<SubscriptionInfo>? {
-        val subscriptionManager =
-            context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
-        return subscriptionManager.activeSubscriptionInfoList
-    }
-
-    @RequiresPermission(Manifest.permission.CALL_PHONE)
-    private fun makeCall(context: Context, simInfo: SubscriptionInfo, phoneNumber: String) {
-        val intent = Intent(Intent.ACTION_CALL).apply {
-            data = Uri.parse("tel:$phoneNumber")
-            putExtra("com.android.phone.extra.SIM_SLOT", simInfo.simSlotIndex) // индекс слота SIM
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
-        context.startActivity(intent)
     }
 }
