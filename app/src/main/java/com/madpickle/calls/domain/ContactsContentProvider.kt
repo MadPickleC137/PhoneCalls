@@ -10,7 +10,7 @@ class ContactsContentProvider(private val cr: ContentResolver) {
     private val order = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC"
     private val projection = arrayOf(
         ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-        ContactsContract.CommonDataKinds.Phone.PHOTO_URI,
+        ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI,
         ContactsContract.CommonDataKinds.Phone.NUMBER
     )
 
@@ -30,7 +30,7 @@ class ContactsContentProvider(private val cr: ContentResolver) {
             val phone =
                 crContacts.getString(crContacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER).coerceAtLeast(0))
             val photoUri =
-                crContacts.getString(crContacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI).coerceAtLeast(0))
+                crContacts.getString(crContacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI).coerceAtLeast(0))
             list.add(ItemContact(
                 name = name,
                 number = phone,

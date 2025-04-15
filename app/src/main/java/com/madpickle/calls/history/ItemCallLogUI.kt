@@ -3,11 +3,9 @@ package com.madpickle.calls.history
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
@@ -25,6 +23,7 @@ import com.madpickle.calls.data.ItemCallLog
 import com.madpickle.calls.ui.theme.ButtonElevation
 import com.madpickle.calls.ui.theme.CardItemShape
 import com.madpickle.calls.ui.theme.PaddingCardItem
+import com.madpickle.calls.ui.theme.Typography
 import com.madpickle.calls.ui.theme.cardItem
 import com.madpickle.calls.ui.theme.secondaryText
 import com.madpickle.calls.ui.theme.text
@@ -62,7 +61,12 @@ fun ItemCallLogUI(log: ItemCallLog, onItemClick: () -> Unit) {
             Column(
                 Modifier.padding(start = 40.dp)
             ) {
-                Text(log.name ?: log.number, color = MaterialTheme.text, fontSize = 16.sp)
+                Text(
+                    log.name ?: log.number,
+                    color = MaterialTheme.text,
+                    fontSize = 16.sp,
+                    style = Typography.body1
+                )
                 Text(
                     log.getDateFormatted(),
                     lineHeight = 14.sp,

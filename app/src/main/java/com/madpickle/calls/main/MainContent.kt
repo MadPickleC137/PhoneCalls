@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
@@ -54,10 +55,12 @@ fun MainContent() {
                     elevation = 4.dp,
                     backgroundColor = MaterialTheme.topAppBar,
                     actions = {
-                        IconButton(
-                            onClick = {}
-                        ) {
-                            Icon(imageVector = Icons.Rounded.Settings, contentDescription = "", tint = MaterialTheme.colors.primary)
+                        if(tabNavigator.current.options.index == 1.toUShort()) {
+                            IconButton(
+                                onClick = {}
+                            ) {
+                                Icon(imageVector = Icons.Rounded.Settings, contentDescription = "", tint = MaterialTheme.colors.primary)
+                            }
                         }
                     },
                     title = {
@@ -71,7 +74,7 @@ fun MainContent() {
             },
             content = { innerPadding ->
                 Box(
-                    modifier = Modifier.padding(innerPadding )
+                    modifier = Modifier.padding(innerPadding)
                 ) {
                     CurrentTab()
                 }

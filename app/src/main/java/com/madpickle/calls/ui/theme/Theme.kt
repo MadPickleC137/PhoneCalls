@@ -46,6 +46,10 @@ val MaterialTheme.fab: Color
     @Composable
     get() = if (isSystemInDarkTheme()) FabDark else Fab
 
+val MaterialTheme.simCard: Color
+    @Composable
+    get() = if (isSystemInDarkTheme()) SimColorDark else SimColor
+
 val MaterialTheme.topAppBar: Color
     @Composable
     get() = if (isSystemInDarkTheme()) TopAppBarDark else TopAppBar
@@ -53,6 +57,10 @@ val MaterialTheme.topAppBar: Color
 val MaterialTheme.cardItem: Color
     @Composable
     get() = if (isSystemInDarkTheme()) CallItemBackgroundDark else CallItemBackground
+
+val MaterialTheme.dialNumber: Color
+    @Composable
+    get() = if (isSystemInDarkTheme()) DialNumberDark else DialNumber
 
 val MaterialTheme.text: Color
     @Composable

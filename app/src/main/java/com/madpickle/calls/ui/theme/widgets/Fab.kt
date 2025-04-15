@@ -42,10 +42,10 @@ fun BoxScope.Fab(text: String, icon: Painter, onClick: ()-> Unit) {
         ) {
 
             Icon(
-                modifier = Modifier.size(32.dp),
+                modifier = Modifier.size(28.dp),
                 tint = MaterialTheme.text,
                 painter = icon,
-                contentDescription = "Floating action button."
+                contentDescription = ""
             )
             Text(text, fontSize = 12.sp, color = MaterialTheme.text)
         }

@@ -5,55 +5,36 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.telephony.SubscriptionInfo
-import android.telephony.SubscriptionManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.FloatingActionButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
 import com.madpickle.calls.R
-import com.madpickle.calls.ui.theme.FabShape
+import com.madpickle.calls.dial.DialScreen
 import com.madpickle.calls.ui.theme.PaddingItem
-import com.madpickle.calls.ui.theme.Typography
-import com.madpickle.calls.ui.theme.fab
-import com.madpickle.calls.ui.theme.text
-import com.madpickle.calls.ui.theme.text2
 import com.madpickle.calls.ui.theme.widgets.Fab
-import com.madpickle.calls.ui.theme.widgets.FullProgressBar
 import com.madpickle.calls.utils.grantedAll
 
 class CallsScreen : Screen {
     @Composable
     override fun Content() {
         val context = LocalContext.current
+        val navigator = LocalNavigator.current
         val model = rememberScreenModel { CallsModel(context.contentResolver) }
         val vs = model.viewState.collectAsState()
         val launcherPermission =
@@ -72,38 +53,25 @@ class CallsScreen : Screen {
                 )
             )
         }
-        if (vs.value.loading) {
-            Box(
-                Modifier.fillMaxSize()
+        Box(Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(PaddingItem),
+                verticalArrangement = Arrangement.spacedBy(PaddingItem)
             ) {
-                FullProgressBar(true)
-            }
-        } else {
-            Box(Modifier.fillMaxSize()) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(PaddingItem),
-                    verticalArrangement = Arrangement.spacedBy(PaddingItem)
-                ) {
-                    items(vs.value.logs) { log ->
-                        ItemCallLogUI(log) {
-                            model.callItemClick(log)
-                        }
+                items(vs.value.logs) { log ->
+                    ItemCallLogUI(log) {
+                        model.callItemClick(log)
                     }
                 }
-                Fab(
-                    text = stringResource(R.string.keyboard_dial),
-                    icon = painterResource(R.drawable.ic_keyboard)
-                ) { }
+            }
+            Fab(
+                text = stringResource(R.string.keyboard_dial),
+                icon = painterResource(R.drawable.ic_keyboard)
+            ) {
+                navigator?.push(DialScreen())
             }
         }
-    }
-
-    @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
-    private fun getSimList(context: Context): List<SubscriptionInfo>? {
-        val subscriptionManager =
-            context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
-        return subscriptionManager.activeSubscriptionInfoList
     }
 
     @RequiresPermission(Manifest.permission.CALL_PHONE)

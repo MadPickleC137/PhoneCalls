@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
+import java.util.LinkedList
 import java.util.Locale
 
 fun  Map<String, Boolean>.grantedAll (): Boolean {
@@ -50,6 +51,56 @@ fun Long.convertEpochToFormattedDate(): String {
 }
 
 
+fun String.removePhoneTransformation(): String {
+    var out = this
+    if(this.length == 5) {
+        out = out.replace(" ", "")
+        out = out.dropLast(1)
+        return out
+    }
+    if(this.length == 7) {
+        out = this.substring(0, 5)
+        return out
+    }
+    if(this.length == 11) {
+        out = this.substring(0, 9)
+        return out
+    }
+    if(this.length == 14) {
+        out = this.substring(0, 12)
+        return out
+    }
+    return out.dropLast(1)
+}
+
+fun String.addPhoneTransformation(): String {
+    val chars = LinkedList<Char>()
+    var out = ""
+    this.forEach {
+        chars.add(it)
+    }
+    if(this.length == 4) {
+        chars.add(1, ' ')
+    }
+    if(this.length == 6) {
+        chars.add(5, ' ')
+    }
+    if(this.length == 10) {
+        chars.add(9, '-')
+    }
+    if(this.length == 13) {
+        chars.add(12, '-')
+    }
+    if(this.length > 15) {
+        return this.substring(0..14)
+    }
+    chars.forEach {
+        out += it
+    }
+    return out
+}
+
+
 fun String.formatPhoneNumber(): String {
     // Убираем все нецифровые символы из строки
     val digits = this.filter { it.isDigit() }
@@ -61,4 +112,10 @@ fun String.formatPhoneNumber(): String {
     }
     // Форматируем номер по маске +[x] [xxx] [xxx]-[xx]-[xx]
     return "+${digits[0]} ${digits.substring(1, 4)} ${digits.substring(4, 7)}-${digits.substring(7, 9)}-${digits.substring(9, 11)}"
+}
+
+fun String.isValidPhone(): Boolean {
+    // Регулярное выражение для проверки номера телефона по маске [x] [xxx] [xxx]-[xx]-[xx]
+    val regex = Regex("^\\d \\d{3} \\d{3}-\\d{2}-\\d{2}$")
+    return regex.matches(this)
 }
