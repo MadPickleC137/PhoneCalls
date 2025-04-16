@@ -10,13 +10,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ContactsModel(
-    contentResolver: ContentResolver,
-    private val contentProvider: ContactsContentProvider = ContactsContentProvider(contentResolver)
+    private val contentResolver: ContentResolver,
 ): ScreenModel {
     private val _contacts = MutableStateFlow<List<ItemContact>>(emptyList())
     val contacts = _contacts.asStateFlow()
 
     fun loadContacts() = screenModelScope.launch {
-        _contacts.value = contentProvider.getAll().sortedBy { it.name }
+        _contacts.value = ContactsContentProvider.getContacts(contentResolver).sortedBy { it.name }
     }
 }

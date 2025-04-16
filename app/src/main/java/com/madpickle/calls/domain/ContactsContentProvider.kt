@@ -6,24 +6,32 @@ import android.provider.ContactsContract
 import com.madpickle.calls.data.ItemContact
 
 
-class ContactsContentProvider(private val cr: ContentResolver) {
-    private val order = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC"
+object ContactsContentProvider {
+    private val contacts = mutableListOf<ItemContact>()
+    private const val ORDER = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC"
     private val projection = arrayOf(
         ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
         ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI,
         ContactsContract.CommonDataKinds.Phone.NUMBER
     )
 
-    fun getAll(): List<ItemContact> {
+    fun getContacts(cr: ContentResolver): MutableList<ItemContact> {
+        if(contacts.isEmpty()) {
+            loadContacts(cr)
+        }
+        return contacts
+    }
+
+    fun loadContacts(cr: ContentResolver) {
+        contacts.clear()
         val crContacts: Cursor? = cr.query(
             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
             projection,
             null,
             null,
-            order
+            ORDER
         )
-        if(crContacts == null) return emptyList()
-        val list = mutableListOf<ItemContact>()
+        if(crContacts == null) return
         while (crContacts.moveToNext()) {
             val name =
                 crContacts.getString(crContacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME).coerceAtLeast(0))
@@ -31,7 +39,7 @@ class ContactsContentProvider(private val cr: ContentResolver) {
                 crContacts.getString(crContacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER).coerceAtLeast(0))
             val photoUri =
                 crContacts.getString(crContacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI).coerceAtLeast(0))
-            list.add(ItemContact(
+            contacts.add(ItemContact(
                 name = name,
                 number = phone,
                 imageUri = photoUri,
@@ -39,6 +47,5 @@ class ContactsContentProvider(private val cr: ContentResolver) {
             ))
         }
         crContacts.close()
-        return list
     }
 }

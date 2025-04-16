@@ -1,14 +1,9 @@
 package com.madpickle.calls.dial
 
 import android.Manifest
-import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
-import android.telephony.SubscriptionInfo
-import android.telephony.SubscriptionManager
-import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
@@ -33,6 +29,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,8 +46,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
+import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.madpickle.calls.R
+import com.madpickle.calls.contacts.ItemContactUI
 import com.madpickle.calls.ui.theme.dialNumber
 import com.madpickle.calls.ui.theme.divider
 import com.madpickle.calls.ui.theme.icon
@@ -58,6 +57,7 @@ import com.madpickle.calls.ui.theme.simCard
 import com.madpickle.calls.ui.theme.text
 import com.madpickle.calls.ui.theme.text2
 import com.madpickle.calls.utils.addPhoneTransformation
+import com.madpickle.calls.utils.callNumberIfPossible
 import com.madpickle.calls.utils.getSimList
 import com.madpickle.calls.utils.isValidPhone
 import com.madpickle.calls.utils.makeCall
@@ -71,25 +71,37 @@ class DialScreen : Screen {
     @Composable
     override fun Content() {
         val context = LocalContext.current
+        val model = rememberScreenModel { DialModel(context.contentResolver) }
+        val contactsFinder = model.contacts.collectAsState()
         val contentPadding = 12.dp
+        val itemPadding = 8.dp
         val buttonShape = RoundedCornerShape(16.dp)
         var phone by remember { mutableStateOf("") }
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
             LazyColumn(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                contentPadding = PaddingValues(itemPadding),
+                verticalArrangement = Arrangement.spacedBy(itemPadding),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
+                items(contactsFinder.value) { contact ->
+                    ItemContactUI(contact) {
+                        context.callNumberIfPossible(contact.number)
+                    }
+                }
             }
             Divider(Modifier.fillMaxWidth(), color = MaterialTheme.divider, thickness = 0.5.dp)
-            Row(
+            Box(
                 Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
             ) {
                 TextField(
                     value = phone,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.Center)
+                        .padding(horizontal = contentPadding),
                     readOnly = true,
                     textStyle = TextStyle(
                         fontSize = 38.sp,
@@ -107,9 +119,12 @@ class DialScreen : Screen {
                     onValueChange = {}
                 )
                 IconButton(
-                    modifier = Modifier.padding(contentPadding),
+                    modifier = Modifier
+                        .padding(contentPadding)
+                        .align(Alignment.CenterEnd),
                     onClick = {
                         phone = phone.removePhoneTransformation()
+                        model.findInContacts(phone)
                     }
                 ) {
                     Icon(
@@ -133,6 +148,7 @@ class DialScreen : Screen {
                         modifier = Modifier.size(60.dp),
                         onClick = {
                             phone = (phone.plus(item)).addPhoneTransformation()
+                            model.findInContacts(phone)
                         },
                         shape = buttonShape,
                         elevation = ButtonDefaults.elevation(
@@ -153,7 +169,7 @@ class DialScreen : Screen {
                 Modifier
                     .fillMaxWidth()
                     .padding(contentPadding),
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                horizontalArrangement = Arrangement.spacedBy(itemPadding, Alignment.CenterHorizontally),
             ) {
                 if (ActivityCompat.checkSelfPermission(
                         context,
@@ -167,7 +183,7 @@ class DialScreen : Screen {
                             },
                             shape = buttonShape,
                             elevation = ButtonDefaults.elevation(
-                                defaultElevation = 8.dp,
+                                defaultElevation = itemPadding,
                                 pressedElevation = 6.dp,
                                 hoveredElevation = 0.dp,
                                 focusedElevation = 0.dp

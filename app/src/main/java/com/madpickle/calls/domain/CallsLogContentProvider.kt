@@ -5,7 +5,7 @@ import android.provider.CallLog
 import com.madpickle.calls.data.ItemCallLog
 import com.madpickle.calls.data.getCallType
 
-class CallsLogContentProvider(private val cr: ContentResolver) {
+object CallsLogContentProvider {
     private val callLogList = mutableListOf<ItemCallLog>()
 
     private val projection = arrayOf(
@@ -17,7 +17,7 @@ class CallsLogContentProvider(private val cr: ContentResolver) {
         CallLog.Calls.DURATION
     )
 
-    private fun getCursor() = cr.query(
+    private fun getCursor(cr: ContentResolver) = cr.query(
         CallLog.Calls.CONTENT_URI,
         projection,
         null,
@@ -25,8 +25,16 @@ class CallsLogContentProvider(private val cr: ContentResolver) {
         "${CallLog.Calls.DATE} DESC" // Сортировка по дате
     )
 
-    fun getCalls(): List<ItemCallLog> {
-        getCursor()?.use {
+    fun getCalls(cr: ContentResolver): List<ItemCallLog> {
+        if(callLogList.isEmpty()) {
+            loadLogs(cr)
+        }
+        return callLogList
+    }
+
+    fun loadLogs(cr: ContentResolver) {
+        callLogList.clear()
+        getCursor(cr)?.use {
             val idIndex = it.getColumnIndex(CallLog.Calls._ID)
             val nameIndex = it.getColumnIndex(CallLog.Calls.CACHED_NAME)
             val numberIndex = it.getColumnIndex(CallLog.Calls.NUMBER)
@@ -45,7 +53,6 @@ class CallsLogContentProvider(private val cr: ContentResolver) {
                 callLogList.add(ItemCallLog(id, name, number, type.getCallType(), date, duration))
             }
         }
-        return callLogList
     }
 
 }

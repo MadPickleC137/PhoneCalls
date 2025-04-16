@@ -1,14 +1,9 @@
 package com.madpickle.calls.history
 
 import android.Manifest
-import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
-import android.telephony.SubscriptionInfo
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,6 +25,7 @@ import com.madpickle.calls.R
 import com.madpickle.calls.dial.DialScreen
 import com.madpickle.calls.ui.theme.PaddingItem
 import com.madpickle.calls.ui.theme.widgets.Fab
+import com.madpickle.calls.utils.callNumberIfPossible
 import com.madpickle.calls.utils.getDefaultSim
 import com.madpickle.calls.utils.grantedAll
 import com.madpickle.calls.utils.makeCall
@@ -65,16 +61,7 @@ class CallsScreen : Screen {
             ) {
                 items(vs.value.logs) { log ->
                     ItemCallLogUI(log) {
-                        if (ActivityCompat.checkSelfPermission(
-                                context,
-                                Manifest.permission.CALL_PHONE
-                            ) == PackageManager.PERMISSION_GRANTED
-                        ) {
-                            context.getDefaultSim()?.let {
-                                context.makeCall(it, log.number)
-                            }
-                        }
-                        model.callItemClick(log)
+                        context.callNumberIfPossible(log.number)
                     }
                 }
             }
@@ -85,14 +72,5 @@ class CallsScreen : Screen {
                 navigator?.push(DialScreen())
             }
         }
-    }
-
-    @RequiresPermission(Manifest.permission.CALL_PHONE)
-    private fun makeCall(context: Context, simInfo: SubscriptionInfo, phoneNumber: String) {
-        val intent = Intent(Intent.ACTION_CALL).apply {
-            data = Uri.parse("tel:$phoneNumber")
-            putExtra("com.android.phone.extra.SIM_SLOT", simInfo.simSlotIndex) // индекс слота SIM
-        }
-        context.startActivity(intent)
     }
 }

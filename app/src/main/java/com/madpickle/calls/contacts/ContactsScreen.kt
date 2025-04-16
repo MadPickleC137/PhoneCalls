@@ -46,7 +46,9 @@ class ContactsScreen : Screen {
                 items(contacts.value, key = { contact ->
                     contact.position
                 }) { item ->
-                    ItemContactUI(item) { }
+                    ItemContactUI(item) {
+
+                    }
                 }
             }
             Fab(

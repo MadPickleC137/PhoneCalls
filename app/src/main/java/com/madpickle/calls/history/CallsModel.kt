@@ -11,8 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class CallsModel(
-    contentResolver: ContentResolver,
-    private val callsProvider: CallsLogContentProvider = CallsLogContentProvider(contentResolver)
+    private val contentResolver: ContentResolver,
 ): ScreenModel {
 
     private val _state = MutableStateFlow(CallsViewState())
@@ -20,16 +19,12 @@ class CallsModel(
 
     fun loadCalls() {
         screenModelScope.launch(Dispatchers.IO) {
-            val calls = callsProvider.getCalls()
+            val calls = CallsLogContentProvider.getCalls(contentResolver)
             _state.value = viewState.value.copy(
                 loading = false,
                 logs = calls
             )
         }
-    }
-
-    fun callItemClick(log: ItemCallLog) {
-
     }
 }
 

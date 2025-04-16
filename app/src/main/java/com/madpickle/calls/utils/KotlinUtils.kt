@@ -52,6 +52,9 @@ fun Long.convertEpochToFormattedDate(): String {
 
 
 fun String.removePhoneTransformation(): String {
+    if(this.contains(Regex("[*#]"))) {
+        return this.dropLast(1)
+    }
     var out = this
     if(this.length == 5) {
         out = out.replace(" ", "")
@@ -74,6 +77,9 @@ fun String.removePhoneTransformation(): String {
 }
 
 fun String.addPhoneTransformation(): String {
+    if(this.contains(Regex("[*#]"))) {
+        return this
+    }
     val chars = LinkedList<Char>()
     var out = ""
     this.forEach {
@@ -115,7 +121,8 @@ fun String.formatPhoneNumber(): String {
 }
 
 fun String.isValidPhone(): Boolean {
-    // Регулярное выражение для проверки номера телефона по маске [x] [xxx] [xxx]-[xx]-[xx]
-    val regex = Regex("^\\d \\d{3} \\d{3}-\\d{2}-\\d{2}$")
-    return regex.matches(this)
+    return this.length > 1
+//    // Регулярное выражение для проверки номера телефона по маске [x] [xxx] [xxx]-[xx]-[xx]
+//    val regex = Regex("^\\d \\d{3} \\d{3}-\\d{2}-\\d{2}$")
+//    return regex.matches(this)
 }
