@@ -2,6 +2,7 @@ package com.madpickle.calls.ui.theme.widgets
 
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -27,6 +28,7 @@ fun BoxScope.Fab(text: String, icon: Painter, onClick: ()-> Unit) {
         shape = FabShape,
         modifier = Modifier
             .wrapContentSize()
+            .defaultMinSize(minWidth = 120.dp)
             .align(Alignment.BottomEnd)
             .padding(12.dp),
         elevation = FloatingActionButtonDefaults.elevation(

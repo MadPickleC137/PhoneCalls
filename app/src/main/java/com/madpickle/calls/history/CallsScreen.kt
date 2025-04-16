@@ -21,6 +21,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.madpickle.calls.R
 import com.madpickle.calls.dial.DialScreen
+import com.madpickle.calls.ui.theme.MainPaddingItems
 import com.madpickle.calls.ui.theme.PaddingItem
 import com.madpickle.calls.ui.theme.widgets.Fab
 import com.madpickle.calls.utils.callNumberIfPossible
@@ -52,7 +53,7 @@ class CallsScreen : Screen {
         Box(Modifier.fillMaxSize()) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(PaddingItem),
+                contentPadding =MainPaddingItems,
                 verticalArrangement = Arrangement.spacedBy(PaddingItem)
             ) {
                 items(vs.value.logs) { log ->

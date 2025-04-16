@@ -22,6 +22,8 @@ import androidx.core.content.ContextCompat
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.madpickle.calls.R
+import com.madpickle.calls.ui.theme.HeightItem
+import com.madpickle.calls.ui.theme.MainPaddingItems
 import com.madpickle.calls.ui.theme.PaddingItem
 import com.madpickle.calls.ui.theme.widgets.Fab
 
@@ -41,7 +43,7 @@ class ContactsScreen : Screen {
                 verticalArrangement = Arrangement.spacedBy(PaddingItem),
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(PaddingItem)
+                contentPadding = MainPaddingItems
             ) {
                 items(contacts.value, key = { contact ->
                     contact.position

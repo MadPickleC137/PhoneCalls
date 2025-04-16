@@ -50,6 +50,7 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.madpickle.calls.R
 import com.madpickle.calls.contacts.ItemContactUI
+import com.madpickle.calls.ui.theme.PaddingItem
 import com.madpickle.calls.ui.theme.dialNumber
 import com.madpickle.calls.ui.theme.divider
 import com.madpickle.calls.ui.theme.icon
@@ -74,7 +75,6 @@ class DialScreen : Screen {
         val model = rememberScreenModel { DialModel(context.contentResolver) }
         val contactsFinder = model.contacts.collectAsState()
         val contentPadding = 12.dp
-        val itemPadding = 8.dp
         val buttonShape = RoundedCornerShape(16.dp)
         var phone by remember { mutableStateOf("") }
         Column(
@@ -82,8 +82,8 @@ class DialScreen : Screen {
         ) {
             LazyColumn(
                 modifier = Modifier.weight(1f),
-                contentPadding = PaddingValues(itemPadding),
-                verticalArrangement = Arrangement.spacedBy(itemPadding),
+                contentPadding = PaddingValues(PaddingItem),
+                verticalArrangement = Arrangement.spacedBy(PaddingItem),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 items(contactsFinder.value) { contact ->
@@ -169,7 +169,7 @@ class DialScreen : Screen {
                 Modifier
                     .fillMaxWidth()
                     .padding(contentPadding),
-                horizontalArrangement = Arrangement.spacedBy(itemPadding, Alignment.CenterHorizontally),
+                horizontalArrangement = Arrangement.spacedBy(PaddingItem, Alignment.CenterHorizontally),
             ) {
                 if (ActivityCompat.checkSelfPermission(
                         context,
@@ -183,7 +183,7 @@ class DialScreen : Screen {
                             },
                             shape = buttonShape,
                             elevation = ButtonDefaults.elevation(
-                                defaultElevation = itemPadding,
+                                defaultElevation = PaddingItem,
                                 pressedElevation = 6.dp,
                                 hoveredElevation = 0.dp,
                                 focusedElevation = 0.dp
