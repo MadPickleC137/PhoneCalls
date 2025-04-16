@@ -1,7 +1,6 @@
 package com.madpickle.calls.history
 
 import android.Manifest
-import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.core.app.ActivityCompat
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -26,9 +24,7 @@ import com.madpickle.calls.dial.DialScreen
 import com.madpickle.calls.ui.theme.PaddingItem
 import com.madpickle.calls.ui.theme.widgets.Fab
 import com.madpickle.calls.utils.callNumberIfPossible
-import com.madpickle.calls.utils.getDefaultSim
 import com.madpickle.calls.utils.grantedAll
-import com.madpickle.calls.utils.makeCall
 
 class CallsScreen : Screen {
     @Composable
