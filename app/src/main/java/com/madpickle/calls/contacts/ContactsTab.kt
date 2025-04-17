@@ -19,7 +19,7 @@ object ContactsTab : Tab {
         @Composable
         get() {
             val icon = rememberVectorPainter(Icons.Rounded.Person)
-            val title =  stringResource(R.string.contacts)
+            val title = stringResource(R.string.contacts)
 
             return remember {
                 TabOptions(

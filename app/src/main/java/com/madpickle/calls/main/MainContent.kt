@@ -10,13 +10,10 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -53,15 +50,6 @@ fun MainContent() {
                 TopAppBar(
                     elevation = 4.dp,
                     backgroundColor = MaterialTheme.topAppBar,
-                    actions = {
-                        if(tabNavigator.current.options.index == 1.toUShort()) {
-                            IconButton(
-                                onClick = {}
-                            ) {
-                                Icon(imageVector = Icons.Rounded.Settings, contentDescription = "", tint = MaterialTheme.colors.primary)
-                            }
-                        }
-                    },
                     title = {
                         Text(
                             text = tabNavigator.current.options.title,

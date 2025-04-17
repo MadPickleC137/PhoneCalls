@@ -6,7 +6,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,21 +20,27 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
 import com.madpickle.calls.R
-import com.madpickle.calls.ui.theme.HeightItem
+import com.madpickle.calls.detail.DetailScreen
 import com.madpickle.calls.ui.theme.MainPaddingItems
 import com.madpickle.calls.ui.theme.PaddingItem
 import com.madpickle.calls.ui.theme.widgets.Fab
+import com.madpickle.calls.utils.grantedAll
 
 class ContactsScreen : Screen {
     @Composable
     override fun Content() {
         val context = LocalContext.current
+        val navigator = LocalNavigator.current
         val model = rememberScreenModel { ContactsModel(context.contentResolver) }
         val contacts = model.contacts.collectAsState()
-        val launcherPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if(isGranted) model.loadContacts()
-        }
+        val launcherPermission =
+            rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+                if (permissions.grantedAll()) {
+                    model.loadContacts()
+                }
+            }
         Box(
             Modifier.fillMaxSize()
         ) {
@@ -49,7 +54,7 @@ class ContactsScreen : Screen {
                     contact.position
                 }) { item ->
                     ItemContactUI(item) {
-
+                        navigator?.push(DetailScreen(item.number))
                     }
                 }
             }
@@ -58,9 +63,22 @@ class ContactsScreen : Screen {
                 icon = painterResource(R.drawable.ic_add)
             ) { }
         }
-        if(ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.READ_CONTACTS
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.WRITE_CONTACTS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             SideEffect {
-                launcherPermission.launch(Manifest.permission.READ_CONTACTS)
+                launcherPermission.launch(
+                    arrayOf(
+                        Manifest.permission.READ_CONTACTS,
+                        Manifest.permission.WRITE_CONTACTS
+                    )
+                )
             }
         } else {
             model.loadContacts()

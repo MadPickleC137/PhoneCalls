@@ -14,7 +14,7 @@ object CallsLogContentProvider {
         CallLog.Calls.TYPE,
         CallLog.Calls.DATE,
         CallLog.Calls.CACHED_NAME,
-        CallLog.Calls.DURATION
+        CallLog.Calls.DURATION,
     )
 
     private fun getCursor(cr: ContentResolver) = cr.query(

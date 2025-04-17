@@ -12,7 +12,7 @@ object ContactsContentProvider {
     private val projection = arrayOf(
         ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
         ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI,
-        ContactsContract.CommonDataKinds.Phone.NUMBER
+        ContactsContract.CommonDataKinds.Phone.NUMBER,
     )
 
     fun getContacts(cr: ContentResolver): MutableList<ItemContact> {
