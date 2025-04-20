@@ -25,7 +25,37 @@ fun Long.convertToMMSS(): String {
 }
 
 
+fun Long.convertEpochToFormattedTime(): String {
+    // Создаем объект Date из epoch значения
+    val date = Date(this)
+    // Форматируем время "HH:MM"
+    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+    val timeString = timeFormat.format(date)
+    // Возвращаем строку с временем
+    return timeString
+}
+
 fun Long.convertEpochToFormattedDate(): String {
+    // Создаем объект Date из epoch значения
+    val date = Date(this)
+    // Получаем текущий год
+    val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+
+    // Форматируем дату "{день месяца} {название месяца} {год}"
+    val dateFormat = SimpleDateFormat("d MMMM", Locale.getDefault())
+    var dateString = dateFormat.format(date)
+
+    // Добавляем год, если он не текущий
+    val year = SimpleDateFormat("yyyy", Locale.getDefault()).format(date)
+    if (year.toInt() != currentYear) {
+        dateString += " $year"
+    }
+
+    // Возвращаем строку с временем и датой
+    return dateString
+}
+
+fun Long.convertEpochToFormattedTimeDate(): String {
     // Создаем объект Date из epoch значения
     val date = Date(this)
 

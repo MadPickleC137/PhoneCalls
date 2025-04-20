@@ -54,7 +54,7 @@ class ContactsScreen : Screen {
                     contact.position
                 }) { item ->
                     ItemContactUI(item) {
-                        navigator?.push(DetailScreen(item.number))
+                        navigator?.push(DetailScreen(item.name))
                     }
                 }
             }

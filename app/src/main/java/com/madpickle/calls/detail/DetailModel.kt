@@ -5,21 +5,33 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import com.madpickle.calls.data.ContactDetail
 import com.madpickle.calls.domain.CallsLogContentProvider
 import com.madpickle.calls.domain.ContactsContentProvider
+import com.madpickle.calls.domain.DeleteContactUseCase
 
 class DetailModel(
-    private val contentResolver: ContentResolver
+    private val contentResolver: ContentResolver,
+    private val deleteContactUseCase: DeleteContactUseCase = DeleteContactUseCase(contentResolver)
 ): ScreenModel {
-    fun getDetail(number: String): ContactDetail? {
-        val contact = ContactsContentProvider.getContacts(contentResolver).firstOrNull {
-            it.number == number
-        } ?: return null
+    fun getDetail(name: String): ContactDetail {
+        val contacts = ContactsContentProvider.getContacts(contentResolver).filter {
+            it.name == name
+        }.distinctBy { it.number }
         val calls = CallsLogContentProvider.getCalls(contentResolver).filter {
-            it.number == number
+            it.name == name
         }
+            .sortedBy { it.date }
+            .asReversed()
+            .groupBy { it.getDateFormatted() }
         return ContactDetail(
-            contact = contact,
-            callLogs = calls
+            name = contacts.firstOrNull()?.name.orEmpty(),
+            imageUri = contacts.firstOrNull { it.imageUri != null }?.imageUri,
+            numbers = contacts.map { it.number },
+            ids = contacts.map { it.id },
+            sectionsLogs = calls
         )
     }
 
+    fun deleteContact(name: String) {
+        deleteContactUseCase(name)
+        ContactsContentProvider.loadContacts(contentResolver)
+    }
 }

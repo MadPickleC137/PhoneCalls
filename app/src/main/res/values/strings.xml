@@ -4,4 +4,6 @@
     <string name="calls">Вызовы</string>
     <string name="keyboard_dial">Набрать</string>
     <string name="add">Добавить</string>
+    <string name="last_calls">Последние звонки</string>
+    <string name="delete">Удалить</string>
 </resources>

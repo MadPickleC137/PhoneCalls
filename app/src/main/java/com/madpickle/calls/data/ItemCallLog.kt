@@ -1,6 +1,9 @@
 package com.madpickle.calls.data
 
+import com.madpickle.calls.R
 import com.madpickle.calls.utils.convertEpochToFormattedDate
+import com.madpickle.calls.utils.convertEpochToFormattedTimeDate
+import com.madpickle.calls.utils.convertEpochToFormattedTime
 import com.madpickle.calls.utils.convertToMMSS
 
 
@@ -17,8 +20,24 @@ data class ItemCallLog(
         return duration.convertToMMSS()
     }
 
+    fun getTimeDateFormatted(): String {
+        return date.convertEpochToFormattedTimeDate()
+    }
+
     fun getDateFormatted(): String {
         return date.convertEpochToFormattedDate()
+    }
+
+    fun getTimeFormatted(): String {
+        return date.convertEpochToFormattedTime()
+    }
+
+    fun getIconRes(): Int {
+        return when (type) {
+            CallType.INCOMING -> R.drawable.ic_incom
+            CallType.OUTGOING -> R.drawable.ic_outcom
+            CallType.MISSING -> R.drawable.ic_missed
+        }
     }
 }
 

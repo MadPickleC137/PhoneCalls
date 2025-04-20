@@ -1,10 +1,12 @@
 package com.madpickle.calls.ui.theme
 
+import android.graphics.drawable.shapes.PathShape
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 
 private val LightColorScheme = Colors(
     primary = Primary,
@@ -77,6 +79,10 @@ val MaterialTheme.secondaryText: Color
 val MaterialTheme.divider: Color
     @Composable
     get() = if (isSystemInDarkTheme()) SecondaryDark else Secondary
+
+val MaterialTheme.error: Color
+    @Composable
+    get() = if (isSystemInDarkTheme()) ErrorDark else Error
 
 val MaterialTheme.icon: Color
     @Composable

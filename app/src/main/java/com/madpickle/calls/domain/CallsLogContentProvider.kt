@@ -32,7 +32,7 @@ object CallsLogContentProvider {
         return callLogList
     }
 
-    fun loadLogs(cr: ContentResolver) {
+    private fun loadLogs(cr: ContentResolver) {
         callLogList.clear()
         getCursor(cr)?.use {
             val idIndex = it.getColumnIndex(CallLog.Calls._ID)

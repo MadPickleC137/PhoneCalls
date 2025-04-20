@@ -50,6 +50,7 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.madpickle.calls.R
 import com.madpickle.calls.contacts.ItemContactUI
+import com.madpickle.calls.ui.theme.ButtonShape
 import com.madpickle.calls.ui.theme.PaddingItem
 import com.madpickle.calls.ui.theme.dialNumber
 import com.madpickle.calls.ui.theme.divider
@@ -75,7 +76,6 @@ class DialScreen : Screen {
         val model = rememberScreenModel { DialModel(context.contentResolver) }
         val contactsFinder = model.contacts.collectAsState()
         val contentPadding = 12.dp
-        val buttonShape = RoundedCornerShape(16.dp)
         var phone by remember { mutableStateOf("") }
         Column(
             modifier = Modifier.fillMaxSize()
@@ -88,7 +88,9 @@ class DialScreen : Screen {
             ) {
                 items(contactsFinder.value) { contact ->
                     ItemContactUI(contact) {
-                        context.callNumberIfPossible(contact.number)
+                        if(contact.number != null) {
+                            context.callNumberIfPossible(contact.number)
+                        }
                     }
                 }
             }
@@ -150,7 +152,7 @@ class DialScreen : Screen {
                             phone = (phone.plus(item)).addPhoneTransformation()
                             model.findInContacts(phone)
                         },
-                        shape = buttonShape,
+                        shape = ButtonShape,
                         elevation = ButtonDefaults.elevation(
                             defaultElevation = 0.dp,
                             pressedElevation = 4.dp,
@@ -176,12 +178,12 @@ class DialScreen : Screen {
                         Manifest.permission.READ_PHONE_STATE
                     ) == PackageManager.PERMISSION_GRANTED
                 ) {
-                    context.getSimList()?.forEach { info ->
+                    context.getSimList().forEach { info ->
                         Button(
                             onClick = {
                                 context.makeCall(info, phone)
                             },
-                            shape = buttonShape,
+                            shape = ButtonShape,
                             elevation = ButtonDefaults.elevation(
                                 defaultElevation = PaddingItem,
                                 pressedElevation = 6.dp,

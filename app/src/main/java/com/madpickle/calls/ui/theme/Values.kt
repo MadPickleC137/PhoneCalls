@@ -8,10 +8,12 @@ import androidx.compose.ui.unit.dp
 
 val PaddingItem = 8.dp
 val HeightItem = 56.dp
+val ContentPadding = 12.dp
 val IconCornersShape = RoundedCornerShape(28.dp)
 val CardItemShape = RoundedCornerShape(12.dp)
 val FabShape = RoundedCornerShape(16.dp)
 val PaddingCardItem = PaddingValues(10.dp)
+val ButtonShape = RoundedCornerShape(16.dp)
 val MainPaddingItems = PaddingValues(start = PaddingItem, end = PaddingItem, top = PaddingItem, bottom = 70.dp)
 val ButtonElevation @Composable get() = ButtonDefaults.elevation(
     defaultElevation = 0.dp,

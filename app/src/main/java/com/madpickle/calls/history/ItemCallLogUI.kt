@@ -17,7 +17,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.madpickle.calls.R
 import com.madpickle.calls.data.CallType
 import com.madpickle.calls.data.ItemCallLog
 import com.madpickle.calls.ui.theme.ButtonElevation
@@ -31,12 +30,6 @@ import com.madpickle.calls.ui.theme.text2
 
 @Composable
 fun ItemCallLogUI(log: ItemCallLog, onItemClick: () -> Unit) {
-
-    val iconRes = when (log.type) {
-        CallType.INCOMING -> R.drawable.ic_incom
-        CallType.OUTGOING -> R.drawable.ic_outcom
-        CallType.MISSING -> R.drawable.ic_missed
-    }
 
     Button(
         modifier = Modifier.fillMaxWidth(),
@@ -55,7 +48,7 @@ fun ItemCallLogUI(log: ItemCallLog, onItemClick: () -> Unit) {
                 modifier = Modifier
                     .size(32.dp)
                     .align(Alignment.CenterStart),
-                painter = painterResource(iconRes),
+                painter = painterResource(log.getIconRes()),
                 contentDescription = ""
             )
             Column(
@@ -68,7 +61,7 @@ fun ItemCallLogUI(log: ItemCallLog, onItemClick: () -> Unit) {
                     style = Typography.body1
                 )
                 Text(
-                    log.getDateFormatted(),
+                    log.getTimeDateFormatted(),
                     lineHeight = 14.sp,
                     color = MaterialTheme.secondaryText,
                     fontSize = 10.sp

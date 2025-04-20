@@ -1,6 +1,9 @@
 package com.madpickle.calls.data
 
 data class ContactDetail(
-    val callLogs: List<ItemCallLog> = emptyList(),
-    val contact: ItemContact? = null,
+    val sectionsLogs: Map<String, List<ItemCallLog>> = emptyMap(),
+    val numbers: List<String> = emptyList(),
+    val ids: List<Long> = emptyList(),
+    val name: String,
+    val imageUri: String?,
 )

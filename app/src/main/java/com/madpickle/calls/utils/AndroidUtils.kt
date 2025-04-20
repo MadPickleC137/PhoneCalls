@@ -16,6 +16,7 @@ fun Context.isAllGranted(): Boolean {
         Manifest.permission.READ_CONTACTS,
         Manifest.permission.READ_CALL_LOG,
         Manifest.permission.READ_PHONE_STATE,
+        Manifest.permission.WRITE_CONTACTS,
         Manifest.permission.CALL_PHONE
     ).all {
         ActivityCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
@@ -47,10 +48,10 @@ fun Context.makeCall(simInfo: SubscriptionInfo, phoneNumber: String) {
 }
 
 @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
-fun Context.getSimList(): List<SubscriptionInfo>? {
+fun Context.getSimList(): List<SubscriptionInfo> {
     val subscriptionManager =
         this.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
-    return subscriptionManager.activeSubscriptionInfoList
+    return subscriptionManager.activeSubscriptionInfoList ?: emptyList()
 }
 
 @RequiresPermission(Manifest.permission.READ_PHONE_STATE)

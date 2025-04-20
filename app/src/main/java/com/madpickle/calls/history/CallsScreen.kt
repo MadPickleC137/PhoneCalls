@@ -44,6 +44,7 @@ class CallsScreen : Screen {
                 arrayOf(
                     Manifest.permission.READ_CONTACTS,
                     Manifest.permission.READ_CALL_LOG,
+                    Manifest.permission.WRITE_CONTACTS,
                     Manifest.permission.READ_PHONE_STATE,
                     Manifest.permission.CALL_PHONE
                 )

@@ -20,11 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import com.madpickle.calls.data.ItemContact
 import com.madpickle.calls.ui.theme.ButtonElevation
 import com.madpickle.calls.ui.theme.CardItemShape
 import com.madpickle.calls.ui.theme.HeightItem
@@ -37,7 +37,7 @@ import com.madpickle.calls.ui.theme.secondaryText
 import com.madpickle.calls.ui.theme.text
 
 @Composable
-fun ItemContactUI(data: ItemContact, onClick: () -> Unit) {
+fun ItemContactUI(data: ItemContactState, onClick: () -> Unit) {
     Button(
         modifier = Modifier.fillMaxWidth(),
         shape = CardItemShape,
@@ -48,7 +48,7 @@ fun ItemContactUI(data: ItemContact, onClick: () -> Unit) {
             backgroundColor = MaterialTheme.cardItem
         )
     ) {
-        if(data.imageUri.isNullOrEmpty()) {
+        if (data.imageUri.isNullOrEmpty()) {
             Icon(
                 modifier = Modifier.size(HeightItem),
                 imageVector = Icons.Rounded.AccountCircle,
@@ -58,19 +58,31 @@ fun ItemContactUI(data: ItemContact, onClick: () -> Unit) {
         } else {
             AsyncImage(
                 model = data.imageUri,
-                modifier = Modifier.background(MaterialTheme.icon, IconCornersShape).size(HeightItem).clip(CircleShape),
+                modifier = Modifier
+                    .background(MaterialTheme.icon, IconCornersShape)
+                    .size(HeightItem)
+                    .clip(CircleShape),
                 contentDescription = "",
                 contentScale = ContentScale.Crop,
                 error = rememberVectorPainter(Icons.Rounded.AccountCircle),
             )
         }
         Column(
-            Modifier.fillMaxWidth().padding(start = 8.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Text(data.name, color = MaterialTheme.text, fontSize = 16.sp, style = Typography.body1)
-            Text(data.number, color = MaterialTheme.secondaryText, fontSize = 14.sp)
+            data.number?.let {
+                Text(
+                    it,
+                    color = MaterialTheme.secondaryText,
+                    fontSize = 14.sp,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }
@@ -79,9 +91,9 @@ fun ItemContactUI(data: ItemContact, onClick: () -> Unit) {
 @Preview
 private fun ItemContactUIPreview() {
     ItemContactUI(
-        ItemContact(
+        ItemContactState(
             "Ivan Ivanocv",
-            "89984321123",
+            null,
             null,
             2
         )

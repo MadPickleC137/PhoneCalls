@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material)
+    implementation(libs.androidx.graphics.shapes)
     implementation(libs.material)
     implementation(libs.voyager.hilt)
     implementation(libs.voyager.navigator)

@@ -10,6 +10,7 @@ object ContactsContentProvider {
     private val contacts = mutableListOf<ItemContact>()
     private const val ORDER = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC"
     private val projection = arrayOf(
+        ContactsContract.Contacts._ID,
         ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
         ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI,
         ContactsContract.CommonDataKinds.Phone.NUMBER,
@@ -33,6 +34,7 @@ object ContactsContentProvider {
         )
         if(crContacts == null) return
         while (crContacts.moveToNext()) {
+            val id = crContacts.getLong(crContacts.getColumnIndex(ContactsContract.Contacts._ID).coerceAtLeast(0))
             val name =
                 crContacts.getString(crContacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME).coerceAtLeast(0))
             val phone =
@@ -40,6 +42,7 @@ object ContactsContentProvider {
             val photoUri =
                 crContacts.getString(crContacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI).coerceAtLeast(0))
             contacts.add(ItemContact(
+                id = id,
                 name = name,
                 number = phone,
                 imageUri = photoUri,
