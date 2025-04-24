@@ -3,32 +3,34 @@ package com.madpickle.calls.domain
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.ContactsContract
-import android.provider.ContactsContract.PhoneLookup
 import android.util.Log
 
 
 class DeleteContactUseCase(private val contentResolver: ContentResolver) {
-    operator fun invoke(name: String) {
-        val contactUri: Uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(name))
-        val cur = contentResolver.query(contactUri, null, null, null, null)
-            ?: return
-        try {
-            while (cur.moveToNext()) {
-                if (cur.getString(cur.getColumnIndex(PhoneLookup.DISPLAY_NAME).coerceAtLeast(0))
-                        .equals(name, ignoreCase = true)
-                ) {
-                    val lookupKey = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY).coerceAtLeast(0))
-                    val uri: Uri = Uri.withAppendedPath(
-                        ContactsContract.Contacts.CONTENT_LOOKUP_URI,
-                        lookupKey
-                    )
+
+    private fun contactExists(contactId: String): Boolean {
+        val cursor = contentResolver.query(
+            ContactsContract.RawContacts.CONTENT_URI,
+            arrayOf(ContactsContract.RawContacts._ID),
+            "${ContactsContract.RawContacts.CONTACT_ID} = ?",
+            arrayOf(contactId),
+            null
+        )
+        val result = cursor?.moveToFirst() == true
+        cursor?.close()
+        return result
+    }
+
+    operator fun invoke(ids: List<String>) {
+        ids.forEach { id ->
+            if(contactExists(id)) {
+                try {
+                    val uri: Uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, id)
                     contentResolver.delete(uri, null, null)
+                } catch (e: Exception) {
+                    Log.d("DeleteContactUseCase", e.message.toString())
                 }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            cur.close()
         }
     }
 }

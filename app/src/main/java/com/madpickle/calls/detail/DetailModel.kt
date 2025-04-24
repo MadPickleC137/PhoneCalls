@@ -30,8 +30,8 @@ class DetailModel(
         )
     }
 
-    fun deleteContact(name: String) {
-        deleteContactUseCase(name)
+    fun deleteContact(ids: List<String>) {
+        deleteContactUseCase(ids)
         ContactsContentProvider.loadContacts(contentResolver)
     }
 }

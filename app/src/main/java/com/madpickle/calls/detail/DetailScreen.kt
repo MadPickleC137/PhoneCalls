@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
@@ -65,7 +66,7 @@ class DetailScreen(private val name: String) : Screen {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(vertical = PaddingItem),
-            verticalArrangement = Arrangement.spacedBy(PaddingItem, Alignment.CenterVertically),
+            verticalArrangement = Arrangement.spacedBy(PaddingItem, Alignment.Top),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
@@ -91,7 +92,7 @@ class DetailScreen(private val name: String) : Screen {
                                     Manifest.permission.WRITE_CONTACTS
                                 ) == PackageManager.PERMISSION_GRANTED
                             ) {
-                                model.deleteContact(detail.name)
+                                model.deleteContact(detail.ids)
                                 navigator?.pop()
                             }
                         },
@@ -130,7 +131,6 @@ class DetailScreen(private val name: String) : Screen {
                         Modifier
                             .fillMaxWidth()
                             .padding(top = 24.dp)
-                            .height(HeightItem)
                             .background(MaterialTheme.cardItem)
                     ) {
                         Text(
@@ -149,9 +149,9 @@ class DetailScreen(private val name: String) : Screen {
                         Text(
                             text = section.key.uppercase(),
                             style = MaterialTheme.typography.body1,
-                            fontSize = 16.sp,
+                            fontSize = 14.sp,
                             modifier = Modifier
-                                .padding(top = 16.dp, start = ContentPadding)
+                                .padding(top = ContentPadding, start = ContentPadding)
                                 .fillMaxWidth(),
                             color = MaterialTheme.secondaryText
                         )

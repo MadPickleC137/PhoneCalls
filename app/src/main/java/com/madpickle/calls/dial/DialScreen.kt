@@ -2,6 +2,7 @@ package com.madpickle.calls.dial
 
 import android.Manifest
 import android.content.pm.PackageManager
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -52,8 +52,8 @@ import com.madpickle.calls.R
 import com.madpickle.calls.contacts.ItemContactUI
 import com.madpickle.calls.ui.theme.ButtonShape
 import com.madpickle.calls.ui.theme.PaddingItem
+import com.madpickle.calls.ui.theme.cardItem
 import com.madpickle.calls.ui.theme.dialNumber
-import com.madpickle.calls.ui.theme.divider
 import com.madpickle.calls.ui.theme.icon
 import com.madpickle.calls.ui.theme.simCard
 import com.madpickle.calls.ui.theme.text
@@ -88,15 +88,21 @@ class DialScreen : Screen {
             ) {
                 items(contactsFinder.value) { contact ->
                     ItemContactUI(contact) {
-                        if(contact.number != null) {
+                        if (contact.number != null) {
                             context.callNumberIfPossible(contact.number)
                         }
                     }
                 }
             }
-            Divider(Modifier.fillMaxWidth(), color = MaterialTheme.divider, thickness = 0.5.dp)
             Box(
-                Modifier.fillMaxWidth(),
+                Modifier
+                    .fillMaxWidth()
+                    .background(
+                        MaterialTheme.cardItem.copy(alpha = 0.8f), RoundedCornerShape(
+                            topStart = 16.dp,
+                            topEnd = 16.dp
+                        )
+                    ),
             ) {
                 TextField(
                     value = phone,
@@ -137,7 +143,6 @@ class DialScreen : Screen {
                     )
                 }
             }
-            Divider(Modifier.fillMaxWidth(), color = MaterialTheme.divider, thickness = 0.5.dp)
             LazyVerticalGrid(
                 contentPadding = PaddingValues(horizontal = 48.dp, vertical = contentPadding),
                 verticalArrangement = Arrangement.spacedBy(contentPadding),
@@ -171,7 +176,10 @@ class DialScreen : Screen {
                 Modifier
                     .fillMaxWidth()
                     .padding(contentPadding),
-                horizontalArrangement = Arrangement.spacedBy(PaddingItem, Alignment.CenterHorizontally),
+                horizontalArrangement = Arrangement.spacedBy(
+                    PaddingItem,
+                    Alignment.CenterHorizontally
+                ),
             ) {
                 if (ActivityCompat.checkSelfPermission(
                         context,

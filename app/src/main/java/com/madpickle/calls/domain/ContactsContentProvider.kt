@@ -8,11 +8,11 @@ import com.madpickle.calls.data.ItemContact
 
 object ContactsContentProvider {
     private val contacts = mutableListOf<ItemContact>()
-    private const val ORDER = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC"
+    private const val ORDER = ContactsContract.Contacts.DISPLAY_NAME + " ASC"
     private val projection = arrayOf(
-        ContactsContract.Contacts._ID,
-        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-        ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI,
+        ContactsContract.RawContacts.CONTACT_ID,
+        ContactsContract.Contacts.DISPLAY_NAME,
+        ContactsContract.Contacts.PHOTO_THUMBNAIL_URI,
         ContactsContract.CommonDataKinds.Phone.NUMBER,
     )
 
@@ -34,13 +34,13 @@ object ContactsContentProvider {
         )
         if(crContacts == null) return
         while (crContacts.moveToNext()) {
-            val id = crContacts.getLong(crContacts.getColumnIndex(ContactsContract.Contacts._ID).coerceAtLeast(0))
+            val id = crContacts.getString(crContacts.getColumnIndex(ContactsContract.RawContacts.CONTACT_ID).coerceAtLeast(0))
             val name =
-                crContacts.getString(crContacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME).coerceAtLeast(0))
+                crContacts.getString(crContacts.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME).coerceAtLeast(0))
             val phone =
                 crContacts.getString(crContacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER).coerceAtLeast(0))
             val photoUri =
-                crContacts.getString(crContacts.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI).coerceAtLeast(0))
+                crContacts.getString(crContacts.getColumnIndex(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI).coerceAtLeast(0))
             contacts.add(ItemContact(
                 id = id,
                 name = name,
