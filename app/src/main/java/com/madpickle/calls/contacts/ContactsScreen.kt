@@ -22,6 +22,7 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.madpickle.calls.R
+import com.madpickle.calls.addContact.AddContactScreen
 import com.madpickle.calls.detail.DetailScreen
 import com.madpickle.calls.ui.theme.MainPaddingItems
 import com.madpickle.calls.ui.theme.PaddingItem
@@ -61,7 +62,9 @@ class ContactsScreen : Screen {
             Fab(
                 text = stringResource(R.string.add),
                 icon = painterResource(R.drawable.ic_add)
-            ) { }
+            ) {
+                navigator?.push(AddContactScreen())
+            }
         }
         if (ContextCompat.checkSelfPermission(
                 context,

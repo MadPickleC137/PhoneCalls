@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -25,6 +24,10 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,8 +35,8 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
@@ -42,10 +45,12 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import coil3.compose.AsyncImage
 import com.madpickle.calls.R
+import com.madpickle.calls.addContact.AddContactScreen
+import com.madpickle.calls.data.ContactDraft
+import com.madpickle.calls.data.getResByType
 import com.madpickle.calls.ui.theme.ButtonElevation
 import com.madpickle.calls.ui.theme.CardItemShape
 import com.madpickle.calls.ui.theme.ContentPadding
-import com.madpickle.calls.ui.theme.HeightItem
 import com.madpickle.calls.ui.theme.PaddingItem
 import com.madpickle.calls.ui.theme.Typography
 import com.madpickle.calls.ui.theme.cardItem
@@ -54,6 +59,8 @@ import com.madpickle.calls.ui.theme.error
 import com.madpickle.calls.ui.theme.icon
 import com.madpickle.calls.ui.theme.secondaryText
 import com.madpickle.calls.ui.theme.text
+import com.madpickle.calls.ui.theme.warn
+import com.madpickle.calls.ui.theme.widgets.NativeDialog
 
 class DetailScreen(private val name: String) : Screen {
 
@@ -61,7 +68,8 @@ class DetailScreen(private val name: String) : Screen {
     override fun Content() {
         val context = LocalContext.current
         val navigator = LocalNavigator.current
-        val model = rememberScreenModel { DetailModel(context.contentResolver) }
+        var showDeleteDialog by remember { mutableStateOf(false) }
+        val model = rememberScreenModel { DetailModel(context) }
         val detail = model.getDetail(name)
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -71,10 +79,10 @@ class DetailScreen(private val name: String) : Screen {
         ) {
             item {
                 Box(
-                    Modifier.fillMaxWidth()
+                    Modifier.fillMaxWidth().padding(horizontal = ContentPadding)
                 ) {
                     AsyncImage(
-                        model = detail.imageUri,
+                        model = detail.imageUri ?: painterResource(detail.image.getResByType()),
                         modifier = Modifier
                             .background(MaterialTheme.cardItem, CircleShape)
                             .align(Alignment.Center)
@@ -92,24 +100,48 @@ class DetailScreen(private val name: String) : Screen {
                                     Manifest.permission.WRITE_CONTACTS
                                 ) == PackageManager.PERMISSION_GRANTED
                             ) {
-                                model.deleteContact(detail.ids)
-                                navigator?.pop()
+                                showDeleteDialog = true
                             }
                         },
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(PaddingItem),
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = MaterialTheme.cardItem
                         ),
                         elevation = ButtonElevation,
-                        contentPadding = PaddingValues(horizontal = 12.dp),
+                        contentPadding = PaddingValues(horizontal = ContentPadding),
                         modifier = Modifier
                             .wrapContentSize()
-                            .padding(end = 12.dp)
-                            .align(Alignment.TopEnd)
+                            .align(Alignment.TopStart)
                     ) {
                         Text(
                             stringResource(R.string.delete),
                             color = MaterialTheme.error
+                        )
+                    }
+                    Button(
+                        onClick = {
+                            navigator?.push(AddContactScreen(
+                                draft = ContactDraft(
+                                    name = detail.name,
+                                    ids = detail.ids,
+                                    image = detail.image,
+                                    numbers = detail.numbers
+                                )
+                            ))
+                        },
+                        shape = RoundedCornerShape(PaddingItem),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = MaterialTheme.cardItem
+                        ),
+                        elevation = ButtonElevation,
+                        contentPadding = PaddingValues(horizontal = ContentPadding),
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .align(Alignment.TopEnd)
+                    ) {
+                        Text(
+                            stringResource(R.string.edit),
+                            color = MaterialTheme.warn
                         )
                     }
                 }
@@ -184,6 +216,22 @@ class DetailScreen(private val name: String) : Screen {
                     }
                 }
             }
+        }
+
+        if(showDeleteDialog) {
+            NativeDialog(
+                onDismiss = {
+                    model.deleteContact(detail.ids)
+                    navigator?.pop()
+                    showDeleteDialog = false
+                },
+                onConfirm = {
+                    showDeleteDialog = false
+                },
+                dismissText = stringResource(R.string.delete),
+                confirmText = stringResource(R.string.cancel),
+                text = stringResource(R.string.delete_contact_text)
+            )
         }
     }
 }
