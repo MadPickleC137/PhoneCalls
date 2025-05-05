@@ -137,6 +137,10 @@ fun String.addPhoneTransformation(): String {
 }
 
 
+fun String.onlyDigits(): String {
+    return this.replace(Regex("\\D"), "")
+}
+
 fun String.formatPhoneNumber(): String {
     // Убираем все нецифровые символы из строки
     val digits = this.filter { it.isDigit() }
@@ -151,8 +155,6 @@ fun String.formatPhoneNumber(): String {
 }
 
 fun String.isValidPhone(): Boolean {
-    return this.length > 1
-//    // Регулярное выражение для проверки номера телефона по маске [x] [xxx] [xxx]-[xx]-[xx]
-//    val regex = Regex("^\\d \\d{3} \\d{3}-\\d{2}-\\d{2}$")
-//    return regex.matches(this)
+    val digits = this.filter { it.isDigit() }
+    return digits.length == 11
 }

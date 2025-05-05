@@ -21,8 +21,6 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -45,7 +42,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import coil3.compose.AsyncImage
 import com.madpickle.calls.R
-import com.madpickle.calls.addContact.AddContactScreen
+import com.madpickle.calls.addContact.EditContactScreen
 import com.madpickle.calls.data.ContactDraft
 import com.madpickle.calls.data.getResByType
 import com.madpickle.calls.ui.theme.ButtonElevation
@@ -82,7 +79,7 @@ class DetailScreen(private val name: String) : Screen {
                     Modifier.fillMaxWidth().padding(horizontal = ContentPadding)
                 ) {
                     AsyncImage(
-                        model = detail.imageUri ?: painterResource(detail.image.getResByType()),
+                        model = detail.imageUri,
                         modifier = Modifier
                             .background(MaterialTheme.cardItem, CircleShape)
                             .align(Alignment.Center)
@@ -91,7 +88,7 @@ class DetailScreen(private val name: String) : Screen {
                         contentDescription = "",
                         colorFilter = ColorFilter.tint(MaterialTheme.icon),
                         contentScale = ContentScale.Crop,
-                        error = rememberVectorPainter(Icons.Rounded.AccountCircle),
+                        error =painterResource(detail.image.getResByType()),
                     )
                     Button(
                         onClick = {
@@ -120,13 +117,14 @@ class DetailScreen(private val name: String) : Screen {
                     }
                     Button(
                         onClick = {
-                            navigator?.push(AddContactScreen(
+                            navigator?.push(EditContactScreen(
                                 draft = ContactDraft(
                                     name = detail.name,
                                     ids = detail.ids,
                                     image = detail.image,
                                     numbers = detail.numbers
-                                )
+                                ),
+                                isEdit = true
                             ))
                         },
                         shape = RoundedCornerShape(PaddingItem),

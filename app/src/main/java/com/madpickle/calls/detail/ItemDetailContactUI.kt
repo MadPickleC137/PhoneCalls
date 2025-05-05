@@ -20,16 +20,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import com.madpickle.calls.ui.theme.ButtonElevation
 import com.madpickle.calls.ui.theme.CardItemShape
+import com.madpickle.calls.ui.theme.FontLargeSize
 import com.madpickle.calls.ui.theme.PaddingItem
 import com.madpickle.calls.ui.theme.cardItem
 import com.madpickle.calls.ui.theme.simCard
 import com.madpickle.calls.ui.theme.text
 import com.madpickle.calls.utils.callNumberIfPossible
-import com.madpickle.calls.utils.isValidPhone
 
 @Composable
 fun ItemDetailContactUI(context: Context, number: String) {
@@ -40,7 +39,12 @@ fun ItemDetailContactUI(context: Context, number: String) {
             .background(MaterialTheme.cardItem, CardItemShape)
             .padding(PaddingItem)
     ) {
-        Text(text = number, color = MaterialTheme.text, modifier = Modifier.align(Alignment.CenterStart), fontSize = 18.sp)
+        Text(
+            text = number,
+            color = MaterialTheme.text,
+            modifier = Modifier.align(Alignment.CenterStart),
+            fontSize = FontLargeSize
+        )
         Button(
             onClick = {
                 if (ActivityCompat.checkSelfPermission(
@@ -56,7 +60,6 @@ fun ItemDetailContactUI(context: Context, number: String) {
                 backgroundColor = MaterialTheme.cardItem
             ),
             elevation = ButtonElevation,
-            enabled = number.isValidPhone(),
             contentPadding = PaddingValues(0.dp),
             modifier = Modifier
                 .size(50.dp)

@@ -9,4 +9,8 @@
     <string name="cancel">Отмена</string>
     <string name="delete_contact_text">Вы уверены, что хотите удалить контакт?</string>
     <string name="edit">Изменить</string>
+    <string name="phone_primary_hint">Основной номер телефона</string>
+    <string name="phone_saved_hint">Привязанные номера</string>
+    <string name="phone_secondary_hint">Дополнительный номер телефона</string>
+    <string name="save">Сохранить</string>
 </resources>

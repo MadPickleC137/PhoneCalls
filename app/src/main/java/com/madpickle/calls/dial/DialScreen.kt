@@ -61,7 +61,6 @@ import com.madpickle.calls.ui.theme.text2
 import com.madpickle.calls.utils.addPhoneTransformation
 import com.madpickle.calls.utils.callNumberIfPossible
 import com.madpickle.calls.utils.getSimList
-import com.madpickle.calls.utils.isValidPhone
 import com.madpickle.calls.utils.makeCall
 import com.madpickle.calls.utils.removePhoneTransformation
 
@@ -201,7 +200,6 @@ class DialScreen : Screen {
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = MaterialTheme.simCard
                             ),
-                            enabled = phone.isValidPhone(),
                             modifier = Modifier.defaultMinSize(minHeight = 56.dp, minWidth = 120.dp)
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {

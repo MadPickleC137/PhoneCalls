@@ -8,8 +8,8 @@ import android.provider.ContactsContract
 
 class UpdateContactUseCase(private val contentResolver: ContentResolver) {
 
-    operator fun invoke(oldPhoneNumber: String, newName: String, newPhoneNumber: String) {
-        val uri = Uri.withAppendedPath(ContactsContract.CommonDataKinds.Phone.CONTENT_FILTER_URI, Uri.encode(oldPhoneNumber))
+    operator fun invoke(name: String, phoneNumbers: List<String>) {
+        val uri = Uri.withAppendedPath(ContactsContract.CommonDataKinds.Phone.CONTENT_FILTER_URI, Uri.encode(name))
         val cursor = contentResolver.query(uri, null, null, null, null)
 
         cursor?.use {
@@ -18,30 +18,19 @@ class UpdateContactUseCase(private val contentResolver: ContentResolver) {
                 if(index < 0) return@use
                 // Получаем ID контакта
                 val contactId: String = it.getString(index) ?: return@use
-                // Обновляем имя контакта
-                val nameValues = ContentValues().apply {
-                    put(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, newName)
-                }
-
-                val nameUri = ContentUris.withAppendedId(ContactsContract.Data.CONTENT_URI, contactId.toLong())
-
-                // Обновляем имя контакта
-                contentResolver.update(nameUri, nameValues, null, null)
-
-                // Обновляем номер телефона
-                val phoneValues = ContentValues().apply {
-                    put(ContactsContract.CommonDataKinds.Phone.NUMBER, newPhoneNumber)
-                }
-
                 // Удаляем старый номер (если нужно) и добавляем новый
                 val phoneUri = Uri.withAppendedPath(ContactsContract.Data.CONTENT_URI, contactId.toLong().toString())
                 contentResolver.delete(phoneUri, "${ContactsContract.CommonDataKinds.Phone.CONTACT_ID} = ?", arrayOf(contactId))
 
-                // Добавляем новый номер телефона
-                phoneValues.put(ContactsContract.CommonDataKinds.Phone.CONTACT_ID, contactId)
-                phoneValues.put(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
-
-                contentResolver.insert(ContactsContract.Data.CONTENT_URI, phoneValues)
+                // Добавление номеров телефонов
+                for (phoneNumber in phoneNumbers) {
+                    val phoneValues = ContentValues().apply {
+                        put(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID, ContentUris.parseId(uri))
+                        put(ContactsContract.CommonDataKinds.Phone.NUMBER, phoneNumber)
+                        put(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
+                    }
+                    contentResolver.insert(ContactsContract.Data.CONTENT_URI, phoneValues)
+                }
             }
         }
     }
