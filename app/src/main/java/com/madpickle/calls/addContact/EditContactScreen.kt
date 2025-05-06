@@ -1,5 +1,6 @@
 package com.madpickle.calls.addContact
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.SnapPosition
@@ -31,6 +32,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -50,6 +53,7 @@ import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
 import com.madpickle.calls.R
 import com.madpickle.calls.data.ContactDraft
 import com.madpickle.calls.data.ImageType
@@ -69,12 +73,12 @@ import com.madpickle.calls.ui.theme.text
 import com.madpickle.calls.ui.theme.text2
 import com.madpickle.calls.ui.theme.warn
 import com.madpickle.calls.utils.MaskVisualTransformation
+import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 class EditContactScreen(
     private val draft: ContactDraft? = null,
-    private val isEdit: Boolean = false
 ) : Screen {
     private val icons = ImageType.entries
     private val iconArrowSize = 50.dp
@@ -83,11 +87,10 @@ class EditContactScreen(
 
     @Composable
     override fun Content() {
+        val context = LocalContext.current
         val coroutineScope = rememberCoroutineScope()
         val initialImage = icons.indexOfFirst { it.name == draft?.image?.name }
-        val model = rememberScreenModel { EditContactModel() }
-        model.initNumbers(draft?.numbers.orEmpty())
-        model.setUsername(draft?.name.orEmpty())
+        val model = rememberScreenModel { EditContactModel(context.contentResolver, draft) }
         val pagerState = rememberPagerState(
             pageCount = { icons.count() },
             initialPage = if (initialImage < 0) 0 else initialImage,
@@ -189,11 +192,19 @@ class EditContactScreen(
                     modifier = Modifier
                         .fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
-                    enabled = !isEdit,
                     onValueChange = {
                         if (it.length < 50) {
                             model.setUsername(it)
                         }
+                    },
+                    label = {
+                        Text(
+                            stringResource(R.string.name_placeholder),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                            color = MaterialTheme.text2,
+                            fontSize = 16.sp
+                        )
                     },
                     textStyle = TextStyle(
                         fontSize = 22.sp,
@@ -286,6 +297,15 @@ class EditContactScreen(
                         fontWeight = FontWeight.W500
                     )
                 }
+            }
+        }
+        if (model.isSuccess.value) {
+            LocalNavigator.current?.pop()
+            LaunchedEffect(Unit) {
+                Toasty.success(
+                    context,
+                    context.getString(R.string.contact_saved), Toast.LENGTH_SHORT, true
+                ).show()
             }
         }
     }

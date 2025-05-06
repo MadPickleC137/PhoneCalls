@@ -2,6 +2,7 @@
 agp = "8.6.0"
 androidxGraphicsShapes = "1.0.1"
 coilCompose = "3.1.0"
+githubCore = "0.4.0"
 kotlin = "2.1.10"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -12,6 +13,7 @@ activityCompose = "1.9.3"
 composeBom = "2024.04.01"
 material = "1.12.0"
 material3 = "1.4.0-alpha13"
+toasty = "1.5.2"
 voyager = "1.1.0-beta03"
 
 [libraries]
@@ -19,6 +21,9 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-graphics-shapes = { module = "androidx.graphics:graphics-shapes", version.ref = "androidxGraphicsShapes" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
+contacts-async = { module = "com.github.vestrel00.contacts-android:async", version.ref = "githubCore" }
+contacts-customdata-handlename = { module = "com.github.vestrel00.contacts-android:customdata-handlename", version.ref = "githubCore" }
+contacts-core = { module = "com.github.vestrel00.contacts-android:core", version.ref = "githubCore" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -33,6 +38,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material = { group = "androidx.compose.material", name = "material" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
+toasty = { module = "com.github.GrenderG:Toasty", version.ref = "toasty" }
 voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
 voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
 voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }

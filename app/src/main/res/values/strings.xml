@@ -13,4 +13,6 @@
     <string name="phone_saved_hint">Привязанные номера</string>
     <string name="phone_secondary_hint">Дополнительный номер телефона</string>
     <string name="save">Сохранить</string>
+    <string name="contact_saved">Контакт успешно добавлен!</string>
+    <string name="name_placeholder">Имя контакта</string>
 </resources>

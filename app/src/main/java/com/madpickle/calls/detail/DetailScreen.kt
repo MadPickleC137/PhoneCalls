@@ -124,7 +124,6 @@ class DetailScreen(private val name: String) : Screen {
                                     image = detail.image,
                                     numbers = detail.numbers
                                 ),
-                                isEdit = true
                             ))
                         },
                         shape = RoundedCornerShape(PaddingItem),

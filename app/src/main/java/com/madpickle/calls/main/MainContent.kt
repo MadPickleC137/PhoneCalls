@@ -16,7 +16,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
@@ -25,6 +24,7 @@ import cafe.adriel.voyager.navigator.tab.TabDisposable
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.madpickle.calls.contacts.ContactsTab
 import com.madpickle.calls.history.CallsTab
+import com.madpickle.calls.ui.theme.ContentPadding
 import com.madpickle.calls.ui.theme.navigationBar
 import com.madpickle.calls.ui.theme.topAppBar
 
@@ -47,17 +47,19 @@ fun MainContent() {
             backgroundColor = MaterialTheme.colors.background,
             floatingActionButtonPosition = FabPosition.End,
             topBar = {
-                TopAppBar(
-                    elevation = 4.dp,
-                    backgroundColor = MaterialTheme.topAppBar,
-                    title = {
-                        Text(
-                            text = tabNavigator.current.options.title,
-                            fontSize = 16.sp,
-                            color = MaterialTheme.colors.primary
-                        )
-                    }
-                )
+                if(tabNavigator.current.isVisibleBars()) {
+                    TopAppBar(
+                        elevation = ContentPadding,
+                        backgroundColor = MaterialTheme.topAppBar,
+                        title = {
+                            Text(
+                                text = tabNavigator.current.options.title,
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colors.primary
+                            )
+                        }
+                    )
+                }
             },
             content = { innerPadding ->
                 Box(
@@ -67,12 +69,14 @@ fun MainContent() {
                 }
             },
             bottomBar = {
-                BottomNavigation(
-                    elevation = 12.dp,
-                    backgroundColor = MaterialTheme.navigationBar
-                ) {
-                    TabNavigationItem(CallsTab)
-                    TabNavigationItem(ContactsTab)
+                if(tabNavigator.current.isVisibleBars()) {
+                    BottomNavigation(
+                        elevation = ContentPadding,
+                        backgroundColor = MaterialTheme.navigationBar
+                    ) {
+                        TabNavigationItem(CallsTab)
+                        TabNavigationItem(ContactsTab)
+                    }
                 }
             }
         )
@@ -95,4 +99,13 @@ private fun RowScope.TabNavigationItem(tab: Tab) {
             )
         }
     )
+}
+
+@Composable
+private fun Tab.isVisibleBars(): Boolean {
+    return when (this) {
+        is ContactsTab -> true
+        is CallsTab -> true
+        else -> false
+    }
 }
