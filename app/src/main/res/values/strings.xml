@@ -15,4 +15,13 @@
     <string name="save">Сохранить</string>
     <string name="contact_saved">Контакт успешно добавлен!</string>
     <string name="name_placeholder">Имя контакта</string>
+
+    <plurals name="phone_counters">
+        <item quantity="zero">%2$s и ещё %1$d номеров</item>
+        <item quantity="one">%2$s и ещё %1$d номер</item>
+        <item quantity="two">%2$s и ещё %1$d номера</item>
+        <item quantity="few">%2$s и ещё %1$d номера</item>
+        <item quantity="many">%2$s и ещё %1$d номеров</item>
+        <item quantity="other">%2$s и ещё %1$d номеров</item>
+    </plurals>
 </resources>

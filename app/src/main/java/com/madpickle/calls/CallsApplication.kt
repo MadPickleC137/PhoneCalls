@@ -2,7 +2,7 @@ package com.madpickle.calls
 
 import android.app.Application
 import com.madpickle.calls.domain.CallsLogContentProvider
-import com.madpickle.calls.domain.ContactsContentProvider
+import com.madpickle.calls.domain.LoadContactsUseCase
 import com.madpickle.calls.utils.isAllGranted
 
 class CallsApplication: Application() {
@@ -11,7 +11,7 @@ class CallsApplication: Application() {
         super.onCreate()
         if(this.isAllGranted()) {
             CallsLogContentProvider.getCalls(this.contentResolver)
-            ContactsContentProvider.getContacts(this.contentResolver)
+            LoadContactsUseCase.getContacts(this)
         }
     }
 }

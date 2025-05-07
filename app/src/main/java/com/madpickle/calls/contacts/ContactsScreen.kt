@@ -34,7 +34,7 @@ class ContactsScreen : Screen {
     override fun Content() {
         val context = LocalContext.current
         val navigator = LocalNavigator.current
-        val model = rememberScreenModel { ContactsModel(context.contentResolver) }
+        val model = rememberScreenModel { ContactsModel(context) }
         val contacts = model.contacts.collectAsState()
         val launcherPermission =
             rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -51,11 +51,9 @@ class ContactsScreen : Screen {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 contentPadding = MainPaddingItems
             ) {
-                items(contacts.value, key = { contact ->
-                    contact.position
-                }) { item ->
+                items(contacts.value) { item ->
                     ItemContactUI(item) {
-                        navigator?.push(DetailScreen(item.name))
+                        navigator?.push(DetailScreen(item.id))
                     }
                 }
             }

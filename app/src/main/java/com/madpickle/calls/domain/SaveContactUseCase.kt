@@ -1,41 +1,39 @@
 package com.madpickle.calls.domain
 
-import android.content.ContentResolver
-import android.content.ContentValues
-import android.provider.ContactsContract
+import android.content.Context
+import android.graphics.Bitmap
+import contacts.core.Contacts
+import contacts.core.entities.NewName
+import contacts.core.entities.NewOrganization
+import contacts.core.entities.NewPhone
+import contacts.core.entities.NewRawContact
+import contacts.core.entities.PhoneEntity
+import contacts.core.util.PhotoData
+import contacts.core.util.setPhoto
 
-class SaveContactUseCase(private val contentResolver: ContentResolver) {
+class SaveContactUseCase(private val context: Context) {
 
-    operator fun invoke(name: String, phoneNumbers: List<String>) {
-        // Создаем новый контакт
-        val contactValues = ContentValues().apply {
-            putNull(ContactsContract.RawContacts.ACCOUNT_TYPE)
-            putNull(ContactsContract.RawContacts.ACCOUNT_NAME)
-        }
-
-        val contactUri = contentResolver.insert(ContactsContract.RawContacts.CONTENT_URI, contactValues)
-        val contactId = contactUri?.lastPathSegment
-
-        if (contactId != null) {
-            // Устанавливаем имя контакта
-            val nameValues = ContentValues().apply {
-                put(ContactsContract.Data.RAW_CONTACT_ID, contactId.toLong()) // Устанавливаем raw_contact_id
-                put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE) // Указываем MIME тип
-                put(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, name)
-            }
-
-            contentResolver.insert(ContactsContract.Data.CONTENT_URI, nameValues)
-
-            // Добавляем номера телефонов
-            for (phoneNumber in phoneNumbers) {
-                val phoneValues = ContentValues().apply {
-                    put(ContactsContract.Data.RAW_CONTACT_ID, contactId.toLong()) // Устанавливаем raw_contact_id
-                    put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE) // Указываем MIME тип
-                    put(ContactsContract.CommonDataKinds.Phone.NUMBER, phoneNumber)
-                    put(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE) // или другой тип
+    operator fun invoke(name: String, bitmap: Bitmap, phoneNumbers: List<String>): Boolean {
+        val insertResult = Contacts(context)
+            .insert()
+            .rawContacts(
+                NewRawContact(
+                    name = NewName(givenName = name,),
+                    organization = NewOrganization(
+                        company = "",
+                        title = ""
+                    ),
+                    phones = phoneNumbers.map {
+                        NewPhone(
+                            type = PhoneEntity.Type.MOBILE,
+                            number = it,
+                        )
+                    }.toMutableList()
+                ).apply {
+                    setPhoto(PhotoData.Companion.from(bitmap))
                 }
-                contentResolver.insert(ContactsContract.Data.CONTENT_URI, phoneValues)
-            }
-        }
+            )
+            .commit()
+        return insertResult.isSuccessful
     }
 }

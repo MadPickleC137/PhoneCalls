@@ -59,15 +59,15 @@ import com.madpickle.calls.ui.theme.text
 import com.madpickle.calls.ui.theme.warn
 import com.madpickle.calls.ui.theme.widgets.NativeDialog
 
-class DetailScreen(private val name: String) : Screen {
+class DetailScreen(private val id: Long) : Screen {
 
     @Composable
     override fun Content() {
         val context = LocalContext.current
         val navigator = LocalNavigator.current
         var showDeleteDialog by remember { mutableStateOf(false) }
-        val model = rememberScreenModel { DetailModel(context) }
-        val detail = model.getDetail(name)
+        val model = rememberScreenModel { DetailModel(context, id) }
+        val detail = model.detail
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(vertical = PaddingItem),
@@ -79,7 +79,7 @@ class DetailScreen(private val name: String) : Screen {
                     Modifier.fillMaxWidth().padding(horizontal = ContentPadding)
                 ) {
                     AsyncImage(
-                        model = detail.imageUri,
+                        model = detail.value.imageUri,
                         modifier = Modifier
                             .background(MaterialTheme.cardItem, CircleShape)
                             .align(Alignment.Center)
@@ -88,7 +88,7 @@ class DetailScreen(private val name: String) : Screen {
                         contentDescription = "",
                         colorFilter = ColorFilter.tint(MaterialTheme.icon),
                         contentScale = ContentScale.Crop,
-                        error =painterResource(detail.image.getResByType()),
+                        error = painterResource(R.drawable.account),
                     )
                     Button(
                         onClick = {
@@ -119,10 +119,10 @@ class DetailScreen(private val name: String) : Screen {
                         onClick = {
                             navigator?.push(EditContactScreen(
                                 draft = ContactDraft(
-                                    name = detail.name,
-                                    ids = detail.ids,
-                                    image = detail.image,
-                                    numbers = detail.numbers
+                                    name = detail.value.name,
+                                    id = detail.value.id,
+                                    imageUri = detail.value.imageUri,
+                                    numbers = detail.value.numbers
                                 ),
                             ))
                         },
@@ -145,16 +145,16 @@ class DetailScreen(private val name: String) : Screen {
             }
             item {
                 Text(
-                    detail.name,
+                    detail.value.name,
                     color = MaterialTheme.text,
                     fontSize = 24.sp,
                     style = Typography.body1
                 )
             }
-            items(detail.numbers) {
+            items(detail.value.numbers) {
                 ItemDetailContactUI(context, it)
             }
-            if(detail.sectionsLogs.isNotEmpty()) {
+            if(detail.value.sectionsLogs.isNotEmpty()) {
                 item {
                     Box(
                         Modifier
@@ -173,7 +173,7 @@ class DetailScreen(private val name: String) : Screen {
                         )
                     }
                 }
-                detail.sectionsLogs.forEach { section ->
+                detail.value.sectionsLogs.forEach { section ->
                     item {
                         Text(
                             text = section.key.uppercase(),
@@ -218,7 +218,7 @@ class DetailScreen(private val name: String) : Screen {
         if(showDeleteDialog) {
             NativeDialog(
                 onDismiss = {
-                    model.deleteContact(detail.ids)
+                    model.deleteContact(detail.value.id)
                     navigator?.pop()
                     showDeleteDialog = false
                 },

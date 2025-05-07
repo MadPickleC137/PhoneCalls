@@ -72,7 +72,7 @@ class DialScreen : Screen {
     @Composable
     override fun Content() {
         val context = LocalContext.current
-        val model = rememberScreenModel { DialModel(context.contentResolver) }
+        val model = rememberScreenModel { DialModel(context) }
         val contactsFinder = model.contacts.collectAsState()
         val contentPadding = 12.dp
         var phone by remember { mutableStateOf("") }
@@ -87,8 +87,8 @@ class DialScreen : Screen {
             ) {
                 items(contactsFinder.value) { contact ->
                     ItemContactUI(contact) {
-                        if (contact.number != null) {
-                            context.callNumberIfPossible(contact.number)
+                        if (contact.numbers.firstOrNull() != null) {
+                            context.callNumberIfPossible(contact.numbers.first())
                         }
                     }
                 }

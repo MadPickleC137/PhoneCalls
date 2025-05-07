@@ -20,11 +20,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.madpickle.calls.R
+import com.madpickle.calls.data.ItemContact
 import com.madpickle.calls.ui.theme.ButtonElevation
 import com.madpickle.calls.ui.theme.CardItemShape
 import com.madpickle.calls.ui.theme.HeightItem
@@ -37,7 +40,7 @@ import com.madpickle.calls.ui.theme.secondaryText
 import com.madpickle.calls.ui.theme.text
 
 @Composable
-fun ItemContactUI(data: ItemContactState, onClick: () -> Unit) {
+fun ItemContactUI(data: ItemContact, onClick: () -> Unit) {
     Button(
         modifier = Modifier.fillMaxWidth(),
         shape = CardItemShape,
@@ -75,9 +78,14 @@ fun ItemContactUI(data: ItemContactState, onClick: () -> Unit) {
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Text(data.name, color = MaterialTheme.text, fontSize = 16.sp, style = Typography.body1)
-            data.number?.let {
+            data.numbers.first().let {
                 Text(
-                    it,
+                    pluralStringResource(
+                        R.plurals.phone_counters,
+                        data.numbers.count(),
+                        data.numbers.count(),
+                        data.numbers.first()
+                    ),
                     color = MaterialTheme.secondaryText,
                     fontSize = 14.sp,
                     overflow = TextOverflow.Ellipsis
@@ -91,11 +99,11 @@ fun ItemContactUI(data: ItemContactState, onClick: () -> Unit) {
 @Preview
 private fun ItemContactUIPreview() {
     ItemContactUI(
-        ItemContactState(
+        ItemContact(
+            id = 124,
             "Ivan Ivanocv",
+            listOf("0981279387129", "1231234823974", "1231234823974"),
             null,
-            null,
-            2
         )
     ) {}
 }

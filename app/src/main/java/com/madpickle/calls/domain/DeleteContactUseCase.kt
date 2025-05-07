@@ -1,24 +1,16 @@
 package com.madpickle.calls.domain
 
-import android.content.ContentResolver
-import android.net.Uri
-import android.provider.ContactsContract
+import android.content.Context
+import contacts.core.Contacts
+import contacts.core.equalToIgnoreCase
 
 
-class DeleteContactUseCase(private val contentResolver: ContentResolver) {
+class DeleteContactUseCase(private val context: Context) {
 
-    operator fun invoke(ids: List<String>) {
-        ids.toSet().forEach { id ->
-            try {
-                val uri: Uri = Uri.withAppendedPath(ContactsContract.RawContacts.CONTENT_URI, id)
-                val rows = contentResolver.delete(uri, null, null)
-                if(rows == 0) {
-                    val uriAlt = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, id)
-                    contentResolver.delete(uriAlt, null, null)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+    operator fun invoke(id: Long) {
+        Contacts(context)
+            .delete()
+            .rawContactsWhere { ContactId equalToIgnoreCase id.toString() }
+            .commit()
     }
 }

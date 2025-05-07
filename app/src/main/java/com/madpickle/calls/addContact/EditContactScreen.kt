@@ -1,5 +1,7 @@
 package com.madpickle.calls.addContact
 
+import android.R
+import android.graphics.BitmapFactory
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -77,6 +79,7 @@ import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
+
 class EditContactScreen(
     private val draft: ContactDraft? = null,
 ) : Screen {
@@ -90,7 +93,9 @@ class EditContactScreen(
         val context = LocalContext.current
         val coroutineScope = rememberCoroutineScope()
         val initialImage = icons.indexOfFirst { it.name == draft?.image?.name }
-        val model = rememberScreenModel { EditContactModel(context.contentResolver, draft) }
+        val model = rememberScreenModel { EditContactModel(context, draft) }
+//        val bitmap = BitmapFactory.decodeResource(context.resources, com.madpickle.calls.R.drawable.my_drawable)
+
         val pagerState = rememberPagerState(
             pageCount = { icons.count() },
             initialPage = if (initialImage < 0) 0 else initialImage,

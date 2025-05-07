@@ -1,12 +1,13 @@
 package com.madpickle.calls.addContact
 
 import android.content.ContentResolver
+import android.content.Context
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.madpickle.calls.data.ContactDraft
-import com.madpickle.calls.domain.ContactsContentProvider
+import com.madpickle.calls.domain.LoadContactsUseCase
 import com.madpickle.calls.domain.DeleteContactUseCase
 import com.madpickle.calls.domain.SaveContactUseCase
 import com.madpickle.calls.utils.isValidPhone
@@ -14,10 +15,10 @@ import com.madpickle.calls.utils.onlyDigits
 import kotlinx.coroutines.launch
 
 class EditContactModel(
-    private val cr: ContentResolver,
+    private val context: Context,
     private val draft: ContactDraft?,
-    private val saveContactUseCase: SaveContactUseCase = SaveContactUseCase(cr),
-    private val deleteContactUseCase: DeleteContactUseCase = DeleteContactUseCase(cr)
+    private val saveContactUseCase: SaveContactUseCase = SaveContactUseCase(context.contentResolver),
+    private val deleteContactUseCase: DeleteContactUseCase = DeleteContactUseCase(context.contentResolver)
 ): ScreenModel {
     private val prefix = "7"
     val isSuccess = mutableStateOf(false)
@@ -73,7 +74,7 @@ class EditContactModel(
             ).filter { it.isNotEmpty() }
         }
         saveContactUseCase(username.value, listNumbers)
-        ContactsContentProvider.loadContacts(cr)
+        LoadContactsUseCase.load(context)
         isSuccess.value = true
     }
 
