@@ -1,38 +1,67 @@
 package com.madpickle.calls.addContact
 
-import android.content.ContentResolver
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.madpickle.calls.data.ContactDraft
+import com.madpickle.calls.data.ImageType
+import com.madpickle.calls.data.getResByType
 import com.madpickle.calls.domain.LoadContactsUseCase
-import com.madpickle.calls.domain.DeleteContactUseCase
 import com.madpickle.calls.domain.SaveContactUseCase
+import com.madpickle.calls.domain.UpdateContactUseCase
 import com.madpickle.calls.utils.isValidPhone
 import com.madpickle.calls.utils.onlyDigits
 import kotlinx.coroutines.launch
 
+
 class EditContactModel(
     private val context: Context,
     private val draft: ContactDraft?,
-    private val saveContactUseCase: SaveContactUseCase = SaveContactUseCase(context.contentResolver),
-    private val deleteContactUseCase: DeleteContactUseCase = DeleteContactUseCase(context.contentResolver)
-): ScreenModel {
+    private val saveContactUseCase: SaveContactUseCase = SaveContactUseCase(context),
+    private val updateContactUseCase: UpdateContactUseCase = UpdateContactUseCase(context)
+) : ScreenModel {
     private val prefix = "7"
     val isSuccess = mutableStateOf(false)
+    val selectedImageIndex = mutableIntStateOf(0)
     private val numberStates: MutableList<MutableState<String>> = mutableListOf()
     private val phonePrimary = mutableStateOf(prefix)
     private val username = mutableStateOf("")
-    private val phoneSecondary =  mutableStateOf(prefix)
+    private val phoneSecondary = mutableStateOf(prefix)
     val isErrorName: MutableState<Boolean> = mutableStateOf(false)
     val isErrorPhone: MutableState<Boolean> = mutableStateOf(false)
+    private val imagesBitmap = mutableListOf<Bitmap>()
 
     init {
         initNumbers(draft?.numbers.orEmpty())
         setUsername(draft?.name.orEmpty())
+        initBitmaps()
     }
+
+    private fun initBitmaps() {
+        try {
+            if (draft?.imageUri != null) {
+                val source: ImageDecoder.Source =
+                    ImageDecoder.createSource(context.contentResolver, draft.imageUri)
+                val bitmap = ImageDecoder.decodeBitmap(source)
+                imagesBitmap.add(0, bitmap)
+            }
+            ImageType.entries.forEach {
+                val bitmap: Bitmap? = BitmapFactory.decodeResource(context.resources, it.getResByType())
+                if (bitmap != null) {
+                    imagesBitmap.add(bitmap)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    fun getImages() = imagesBitmap
 
     fun setPrimaryPhone(newValue: String) {
         isErrorPhone.value = !newValue.isValidPhone()
@@ -42,6 +71,7 @@ class EditContactModel(
     fun setSecondaryPhone(newValue: String) {
         phoneSecondary.value = newValue
     }
+
     fun setUsername(newValue: String) {
         isErrorName.value = newValue.length < 3
         username.value = newValue
@@ -61,21 +91,29 @@ class EditContactModel(
     fun getSavedNumbers() = numberStates
 
     fun onSave() = screenModelScope.launch {
-        if(isErrorName.value) return@launch
-        if(isErrorPhone.value) return@launch
-        //удалить, если существует, перед тем как создать новый контакт с измененными данными
-        if(draft?.ids != null) {
-            deleteContactUseCase(draft.ids)
-        }
+        if (isErrorName.value) return@launch
+        if (isErrorPhone.value) return@launch
         val listNumbers = numberStates.map { it.value }.ifEmpty {
             listOf(
-                if(getPrimaryPhone() != prefix) getPrimaryPhone() else "",
-                if(getSecondaryPhone()  != prefix) getSecondaryPhone() else ""
+                if (getPrimaryPhone() != prefix) getPrimaryPhone() else "",
+                if (getSecondaryPhone() != prefix) getSecondaryPhone() else ""
             ).filter { it.isNotEmpty() }
         }
-        saveContactUseCase(username.value, listNumbers)
+        if (draft == null) {
+            isSuccess.value = saveContactUseCase(
+                username.value,
+                imagesBitmap.getOrNull(selectedImageIndex.intValue),
+                listNumbers
+            )
+        } else {
+            updateContactUseCase(
+                draft.id,
+                username.value,
+                imagesBitmap.getOrNull(selectedImageIndex.intValue),
+                listNumbers
+            )
+        }
         LoadContactsUseCase.load(context)
-        isSuccess.value = true
     }
 
 }

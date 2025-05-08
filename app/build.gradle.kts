@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.toasty)
     implementation(libs.contacts.core)
     implementation(libs.contacts.async)
+    implementation(libs.contacts.android.permissions)
     implementation(libs.contacts.customdata.handlename)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

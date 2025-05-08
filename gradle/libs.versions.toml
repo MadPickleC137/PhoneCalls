@@ -21,6 +21,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-graphics-shapes = { module = "androidx.graphics:graphics-shapes", version.ref = "androidxGraphicsShapes" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
+contacts-android-permissions = { module = "com.github.vestrel00.contacts-android:permissions", version.ref = "githubCore" }
 contacts-async = { module = "com.github.vestrel00.contacts-android:async", version.ref = "githubCore" }
 contacts-customdata-handlename = { module = "com.github.vestrel00.contacts-android:customdata-handlename", version.ref = "githubCore" }
 contacts-core = { module = "com.github.vestrel00.contacts-android:core", version.ref = "githubCore" }

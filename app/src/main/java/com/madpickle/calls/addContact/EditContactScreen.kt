@@ -1,9 +1,6 @@
 package com.madpickle.calls.addContact
 
-import android.R
-import android.graphics.BitmapFactory
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Arrangement
@@ -56,10 +53,9 @@ import androidx.compose.ui.zIndex
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import coil3.compose.AsyncImage
 import com.madpickle.calls.R
 import com.madpickle.calls.data.ContactDraft
-import com.madpickle.calls.data.ImageType
-import com.madpickle.calls.data.getResByType
 import com.madpickle.calls.ui.theme.ButtonElevation
 import com.madpickle.calls.ui.theme.ButtonHeight
 import com.madpickle.calls.ui.theme.ButtonShapeSmall
@@ -83,7 +79,6 @@ import kotlin.math.absoluteValue
 class EditContactScreen(
     private val draft: ContactDraft? = null,
 ) : Screen {
-    private val icons = ImageType.entries
     private val iconArrowSize = 50.dp
     private val imageSize = 144.dp
     private val mask = MaskVisualTransformation("+# (###) ###-##-##")
@@ -92,13 +87,10 @@ class EditContactScreen(
     override fun Content() {
         val context = LocalContext.current
         val coroutineScope = rememberCoroutineScope()
-        val initialImage = icons.indexOfFirst { it.name == draft?.image?.name }
         val model = rememberScreenModel { EditContactModel(context, draft) }
-//        val bitmap = BitmapFactory.decodeResource(context.resources, com.madpickle.calls.R.drawable.my_drawable)
-
         val pagerState = rememberPagerState(
-            pageCount = { icons.count() },
-            initialPage = if (initialImage < 0) 0 else initialImage,
+            pageCount = { model.getImages().size },
+            initialPage = 0,
         )
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -159,13 +151,15 @@ class EditContactScreen(
                         pageSpacing = ContentPadding,
                         snapPosition = SnapPosition.Start
                     ) { index ->
-                        val icon = icons[index]
+                        val icon = model.getImages()[index]
+                        model.selectedImageIndex.intValue = index
                         Row(
                             Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
-                            Image(
+                            AsyncImage(
+                                model = icon,
                                 modifier = Modifier
                                     .clip(CircleShape)
                                     .size(imageSize)
@@ -183,7 +177,6 @@ class EditContactScreen(
                                     }
                                     .background(MaterialTheme.cardItem, CircleShape),
                                 alignment = Alignment.Center,
-                                painter = painterResource(icon.getResByType()),
                                 contentDescription = "",
                                 contentScale = ContentScale.Crop,
                             )

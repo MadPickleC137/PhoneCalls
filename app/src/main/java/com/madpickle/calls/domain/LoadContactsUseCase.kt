@@ -23,13 +23,6 @@ object LoadContactsUseCase {
         contacts.clear()
         val result = Contacts(context)
             .query()
-            .include {
-                setOf(
-                    Contact.Id,
-                    Contact.DisplayNamePrimary,
-                    Phone.Number
-                )
-            }
             .orderBy(ContactsFields.DisplayNamePrimary.asc(true))
             .find()
         result.map { contact ->
@@ -39,7 +32,7 @@ object LoadContactsUseCase {
                     name = contact.displayNamePrimary ?: contact.displayNameAlt ?: "",
                     numbers = contact.phoneList()
                         .mapNotNull { PhoneNumberUtils.formatNumber(it.number, "RU") },
-                    imageUri = contact.photoThumbnailUri?.toString(),
+                    imageUri = contact.photoThumbnailUri,
                 )
             )
         }

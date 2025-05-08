@@ -218,7 +218,7 @@ class DetailScreen(private val id: Long) : Screen {
         if(showDeleteDialog) {
             NativeDialog(
                 onDismiss = {
-                    model.deleteContact(detail.value.id)
+                    model.deleteContact()
                     navigator?.pop()
                     showDeleteDialog = false
                 },

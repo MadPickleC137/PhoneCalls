@@ -51,7 +51,7 @@ fun ItemContactUI(data: ItemContact, onClick: () -> Unit) {
             backgroundColor = MaterialTheme.cardItem
         )
     ) {
-        if (data.imageUri.isNullOrEmpty()) {
+        if (data.imageUri == null) {
             Icon(
                 modifier = Modifier.size(HeightItem),
                 imageVector = Icons.Rounded.AccountCircle,
@@ -78,7 +78,7 @@ fun ItemContactUI(data: ItemContact, onClick: () -> Unit) {
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Text(data.name, color = MaterialTheme.text, fontSize = 16.sp, style = Typography.body1)
-            data.numbers.first().let {
+            if(data.numbers.isNotEmpty()) {
                 Text(
                     pluralStringResource(
                         R.plurals.phone_counters,

@@ -17,6 +17,7 @@ fun Context.isAllGranted(): Boolean {
         Manifest.permission.READ_CALL_LOG,
         Manifest.permission.READ_PHONE_STATE,
         Manifest.permission.WRITE_CONTACTS,
+        Manifest.permission.GET_ACCOUNTS,
         Manifest.permission.CALL_PHONE
     ).all {
         ActivityCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED

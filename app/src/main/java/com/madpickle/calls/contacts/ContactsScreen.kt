@@ -71,13 +71,18 @@ class ContactsScreen : Screen {
             ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.WRITE_CONTACTS
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.GET_ACCOUNTS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             SideEffect {
                 launcherPermission.launch(
                     arrayOf(
                         Manifest.permission.READ_CONTACTS,
-                        Manifest.permission.WRITE_CONTACTS
+                        Manifest.permission.WRITE_CONTACTS,
+                        Manifest.permission.GET_ACCOUNTS,
                     )
                 )
             }

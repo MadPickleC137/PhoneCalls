@@ -1,32 +1,48 @@
 package com.madpickle.calls.domain
 
-import android.content.ContentResolver
-import android.content.ContentValues
-import android.net.Uri
-import android.provider.ContactsContract
+import android.content.Context
+import android.graphics.Bitmap
+import contacts.core.Contacts
+import contacts.core.entities.NewPhone
+import contacts.core.entities.PhoneEntity
+import contacts.core.equalToIgnoreCase
+import contacts.core.util.PhotoData
+import contacts.core.util.addPhone
+import contacts.core.util.removeAllPhones
+import contacts.core.util.setName
+import contacts.core.util.setPhoto
 
-class UpdateContactUseCase(private val contentResolver: ContentResolver) {
+class UpdateContactUseCase(private val context: Context) {
 
-    operator fun invoke(contactId: String, name: String, phoneNumbers: List<String>) {
-        val uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, contactId)
-        // Создаем объект ContentValues для обновления
-        val nameValues = ContentValues().apply {
-            put(ContactsContract.Contacts.DISPLAY_NAME, name)
-        }
-        contentResolver.update(uri, nameValues, null, null)
-        // Удаляем старые номера телефонов
-        val phoneUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
-        val phoneSelection = "${ContactsContract.CommonDataKinds.Phone.CONTACT_ID} = ?"
-        contentResolver.delete(phoneUri, phoneSelection, arrayOf(contactId))
-        // Добавляем новые номера телефонов
-        for (phoneNumber in phoneNumbers) {
-            val phoneValues = ContentValues().apply {
-                put(ContactsContract.CommonDataKinds.Phone.CONTACT_ID, contactId)
-                put(ContactsContract.CommonDataKinds.Phone.NUMBER, phoneNumber)
-                put(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE) // или другой тип
+    operator fun invoke(contactId: Long, name: String, bitmap: Bitmap?, phoneNumbers: List<String>) {
+        val contactsApi = Contacts(context)
+        val contact = contactsApi.query()
+            .where {
+                this.RawContact.Id equalToIgnoreCase contactId.toString()
             }
-            contentResolver.insert(phoneUri, phoneValues)
-        }
+            .limit(1)
+            .find().firstOrNull()
+        if(contact == null) return
+
+        contactsApi
+            .update()
+            .deleteBlanks(true)
+            .contacts(contact.mutableCopy {
+                setName {
+                    displayName = name
+                }
+                if(bitmap != null) {
+                    setPhoto(PhotoData.Companion.from(bitmap))
+                }
+                removeAllPhones()
+                phoneNumbers.forEach {
+                    addPhone(NewPhone(
+                        type = PhoneEntity.Type.MOBILE,
+                        number = it,
+                    ))
+                }
+            })
+            .commit()
     }
 
 }
