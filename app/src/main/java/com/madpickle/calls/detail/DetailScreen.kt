@@ -29,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -44,7 +43,6 @@ import coil3.compose.AsyncImage
 import com.madpickle.calls.R
 import com.madpickle.calls.addContact.EditContactScreen
 import com.madpickle.calls.data.ContactDraft
-import com.madpickle.calls.data.getResByType
 import com.madpickle.calls.ui.theme.ButtonElevation
 import com.madpickle.calls.ui.theme.CardItemShape
 import com.madpickle.calls.ui.theme.ContentPadding
@@ -53,7 +51,6 @@ import com.madpickle.calls.ui.theme.Typography
 import com.madpickle.calls.ui.theme.cardItem
 import com.madpickle.calls.ui.theme.divider
 import com.madpickle.calls.ui.theme.error
-import com.madpickle.calls.ui.theme.icon
 import com.madpickle.calls.ui.theme.secondaryText
 import com.madpickle.calls.ui.theme.text
 import com.madpickle.calls.ui.theme.warn
@@ -67,7 +64,7 @@ class DetailScreen(private val id: Long) : Screen {
         val navigator = LocalNavigator.current
         var showDeleteDialog by remember { mutableStateOf(false) }
         val model = rememberScreenModel { DetailModel(context, id) }
-        val detail = model.detail
+        val detail = model.detail.value
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(vertical = PaddingItem),
@@ -79,14 +76,13 @@ class DetailScreen(private val id: Long) : Screen {
                     Modifier.fillMaxWidth().padding(horizontal = ContentPadding)
                 ) {
                     AsyncImage(
-                        model = detail.value.imageUri,
+                        model = detail.imageProfile,
                         modifier = Modifier
                             .background(MaterialTheme.cardItem, CircleShape)
                             .align(Alignment.Center)
-                            .size(100.dp)
+                            .size(144.dp)
                             .clip(CircleShape),
                         contentDescription = "",
-                        colorFilter = ColorFilter.tint(MaterialTheme.icon),
                         contentScale = ContentScale.Crop,
                         error = painterResource(R.drawable.account),
                     )
@@ -119,10 +115,10 @@ class DetailScreen(private val id: Long) : Screen {
                         onClick = {
                             navigator?.push(EditContactScreen(
                                 draft = ContactDraft(
-                                    name = detail.value.name,
-                                    id = detail.value.id,
-                                    imageUri = detail.value.imageUri,
-                                    numbers = detail.value.numbers
+                                    name = detail.name,
+                                    id = detail.id,
+                                    imageUri = detail.imageUri,
+                                    numbers = detail.numbers
                                 ),
                             ))
                         },
@@ -145,16 +141,16 @@ class DetailScreen(private val id: Long) : Screen {
             }
             item {
                 Text(
-                    detail.value.name,
+                    detail.name,
                     color = MaterialTheme.text,
                     fontSize = 24.sp,
                     style = Typography.body1
                 )
             }
-            items(detail.value.numbers) {
+            items(detail.numbers) {
                 ItemDetailContactUI(context, it)
             }
-            if(detail.value.sectionsLogs.isNotEmpty()) {
+            if(detail.sectionsLogs.isNotEmpty()) {
                 item {
                     Box(
                         Modifier
@@ -173,7 +169,7 @@ class DetailScreen(private val id: Long) : Screen {
                         )
                     }
                 }
-                detail.value.sectionsLogs.forEach { section ->
+                detail.sectionsLogs.forEach { section ->
                     item {
                         Text(
                             text = section.key.uppercase(),

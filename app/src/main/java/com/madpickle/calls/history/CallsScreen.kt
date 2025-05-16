@@ -46,6 +46,7 @@ class CallsScreen : Screen {
                     Manifest.permission.READ_CALL_LOG,
                     Manifest.permission.WRITE_CONTACTS,
                     Manifest.permission.READ_PHONE_STATE,
+                    Manifest.permission.ANSWER_PHONE_CALLS,
                     Manifest.permission.CALL_PHONE
                 )
             )

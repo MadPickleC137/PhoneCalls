@@ -1,24 +1,17 @@
 package com.madpickle.calls.domain
 
 import android.content.Context
-import android.util.Log
 import contacts.core.Contacts
-import contacts.core.equalToIgnoreCase
+import contacts.permissions.deleteWithPermission
 
 
 class DeleteContactUseCase(private val context: Context) {
 
-    operator fun invoke(id: String) {
-        val contactApi = Contacts(context)
-        val contacts = Contacts(context).rawContactsQuery()
-            .where {
-                RawContact.Id equalToIgnoreCase id
-            }
-            .find()
-        val result = contactApi
-            .delete()
-            .rawContacts(contacts)
+    suspend operator fun invoke(id: Long): Boolean {
+        val result = Contacts(context)
+            .deleteWithPermission()
+            .contactsWithId(id)
             .commit()
-        Log.d("DeleteContactUseCase", result.isSuccessful.toString())
+        return result.isSuccessful
     }
 }

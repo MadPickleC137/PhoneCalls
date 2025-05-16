@@ -4,12 +4,15 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.net.Uri
 import android.telephony.SubscriptionInfo
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
+
 
 fun Context.isAllGranted(): Boolean {
     return arrayOf(
@@ -73,4 +76,24 @@ fun Context.getDefaultSim(): SubscriptionInfo? {
         }
     }
     return null // Если не нашли подходящую SIM-карту
+}
+
+
+fun Bitmap.getResizedBitmap(
+    newWidth: Int,
+    newHeight: Int,
+    keepOriginal: Boolean = true
+): Bitmap {
+    val width = this.width
+    val height = this.height
+    val scaleWidth = (newWidth.toFloat()) / width
+    val scaleHeight = (newHeight.toFloat()) / height
+
+    val matrix = Matrix()
+    matrix.postScale(scaleWidth, scaleHeight)
+    val resizedBitmap = Bitmap.createBitmap(this, 0, 0, width, height, matrix, false)
+    if (!keepOriginal) {
+        this.recycle()
+    }
+    return resizedBitmap
 }

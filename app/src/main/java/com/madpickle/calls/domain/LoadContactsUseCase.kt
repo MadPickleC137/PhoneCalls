@@ -32,7 +32,7 @@ object LoadContactsUseCase {
                     name = contact.displayNamePrimary ?: contact.displayNameAlt ?: "",
                     numbers = contact.phoneList()
                         .mapNotNull { PhoneNumberUtils.formatNumber(it.number, "RU") },
-                    imageUri = contact.photoThumbnailUri,
+                    imageUri = contact.photoUri,
                 )
             )
         }

@@ -3,6 +3,7 @@ package com.madpickle.calls.detail
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.telephony.PhoneNumberUtils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -40,7 +41,7 @@ fun ItemDetailContactUI(context: Context, number: String) {
             .padding(PaddingItem)
     ) {
         Text(
-            text = number,
+            text = PhoneNumberUtils.formatNumber(number, "RU"),
             color = MaterialTheme.text,
             modifier = Modifier.align(Alignment.CenterStart),
             fontSize = FontLargeSize
