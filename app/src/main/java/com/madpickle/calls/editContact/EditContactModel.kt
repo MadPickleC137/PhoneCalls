@@ -1,11 +1,10 @@
-package com.madpickle.calls.addContact
+package com.madpickle.calls.editContact
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
@@ -28,7 +27,7 @@ class EditContactModel(
 ) : ScreenModel {
     private val prefix = "7"
     val isSuccess = mutableStateOf(false)
-    val selectedImageIndex = mutableIntStateOf(0)
+    private val userImage = mutableStateOf<Bitmap?>(null)
     private val numberStates: MutableList<MutableState<String>> = mutableListOf()
     private val phonePrimary = mutableStateOf(prefix)
     private val username = mutableStateOf("")
@@ -45,14 +44,15 @@ class EditContactModel(
 
     private fun initBitmaps() {
         try {
-            if (draft?.imageUri != null) {
+            draft?.imageUri?.let {
                 val source: ImageDecoder.Source =
                     ImageDecoder.createSource(context.contentResolver, draft.imageUri)
                 val bitmap = ImageDecoder.decodeBitmap(source)
-                imagesBitmap.add(0, bitmap)
+                userImage.value = bitmap
             }
             ImageType.entries.forEach {
                 val bitmap: Bitmap? = BitmapFactory.decodeResource(context.resources, it.getResByType())
+
                 if (bitmap != null) {
                     imagesBitmap.add(bitmap)
                 }
@@ -62,6 +62,18 @@ class EditContactModel(
         }
     }
     fun getImages() = imagesBitmap
+
+    fun getUserImage(): Bitmap? = userImage.value
+
+    fun isSelectedBitmap(bitmap: Bitmap): Boolean {
+        return userImage.value == bitmap
+    }
+
+    fun setUserImage(bitmap: Bitmap){
+        if(userImage.value != bitmap) {
+            userImage.value = bitmap
+        }
+    }
 
     fun setPrimaryPhone(newValue: String) {
         isErrorPhone.value = !newValue.isValidPhone()
@@ -102,14 +114,14 @@ class EditContactModel(
         if (draft == null) {
             isSuccess.value = saveContactUseCase(
                 username.value,
-                imagesBitmap.getOrNull(selectedImageIndex.intValue),
+                userImage.value,
                 listNumbers
             )
         } else {
             updateContactUseCase(
                 draft.id,
                 username.value,
-                imagesBitmap.getOrNull(selectedImageIndex.intValue),
+                userImage.value,
                 listNumbers
             )
         }

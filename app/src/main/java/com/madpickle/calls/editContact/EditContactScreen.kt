@@ -1,10 +1,8 @@
-package com.madpickle.calls.addContact
+package com.madpickle.calls.editContact
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,16 +13,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -32,12 +28,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -48,8 +43,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.lerp
-import androidx.compose.ui.zIndex
 import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -65,123 +58,79 @@ import com.madpickle.calls.ui.theme.IconSize
 import com.madpickle.calls.ui.theme.PaddingItem
 import com.madpickle.calls.ui.theme.cardItem
 import com.madpickle.calls.ui.theme.error
-import com.madpickle.calls.ui.theme.icon
 import com.madpickle.calls.ui.theme.simCard
 import com.madpickle.calls.ui.theme.text
 import com.madpickle.calls.ui.theme.text2
 import com.madpickle.calls.ui.theme.warn
 import com.madpickle.calls.utils.MaskVisualTransformation
 import es.dmoral.toasty.Toasty
-import kotlinx.coroutines.launch
-import kotlin.math.absoluteValue
 
 
 class EditContactScreen(
     private val draft: ContactDraft? = null,
 ) : Screen {
-    private val iconArrowSize = 50.dp
+    private val iconSize = 50.dp
     private val imageSize = 144.dp
     private val mask = MaskVisualTransformation("+# (###) ###-##-##")
 
     @Composable
     override fun Content() {
         val context = LocalContext.current
-        val coroutineScope = rememberCoroutineScope()
         val model = rememberScreenModel { EditContactModel(context, draft) }
-        val pagerState = rememberPagerState(
-            pageCount = { model.getImages().size },
-            initialPage = 0,
-        )
+
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(PaddingItem),
             horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = PaddingValues(ContentPadding)
         ) {
-            item {
-                Box(
-                    Modifier.fillMaxWidth()
+            items(model.getImages()) { bitmap ->
+                OutlinedButton(onClick = {
+                    model.setUserImage(bitmap)
+                },
+                    contentPadding = PaddingValues(),
+                    modifier = Modifier.size(iconSize).background(MaterialTheme.cardItem, CircleShape),
+                    shape = CircleShape,
+                    elevation = ButtonElevation,
+                    border =  ButtonDefaults.outlinedBorder.copy(
+                        width = if(model.isSelectedBitmap(bitmap)) 1.dp else 0.dp,
+                        brush = Brush.sweepGradient(listOf(MaterialTheme.simCard))
+                    ),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        backgroundColor = MaterialTheme.cardItem,
+                        contentColor = MaterialTheme.cardItem
+                    )
                 ) {
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .zIndex(2f),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        IconButton(
-                            onClick = {
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                                }
-                            },
-                            enabled = pagerState.canScrollBackward
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.arror_start),
-                                modifier = Modifier
-                                    .size(iconArrowSize)
-                                    .padding(ContentPadding),
-                                tint = MaterialTheme.icon,
-                                contentDescription = null
-                            )
-                        }
-                        Spacer(Modifier.size(imageSize + 40.dp))
-                        IconButton(
-                            onClick = {
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                                }
-                            },
-                            enabled = pagerState.canScrollForward
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.arror_end),
-                                modifier = Modifier
-                                    .size(iconArrowSize)
-                                    .padding(ContentPadding),
-                                tint = MaterialTheme.icon,
-                                contentDescription = null
-                            )
-                        }
-                    }
-                    HorizontalPager(
-                        state = pagerState,
-                        modifier = Modifier.align(Alignment.Center),
-                        pageSpacing = ContentPadding,
-                        snapPosition = SnapPosition.Start
-                    ) { index ->
-                        val icon = model.getImages()[index]
-                        model.selectedImageIndex.intValue = index
-                        Row(
-                            Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            AsyncImage(
-                                model = icon,
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .size(imageSize)
-                                    .graphicsLayer {
-                                        val pageOffset = (
-                                                (pagerState.currentPage - index) + pagerState
-                                                    .currentPageOffsetFraction
-                                                ).absoluteValue
-
-                                        alpha = lerp(
-                                            start = 0.3f,
-                                            stop = 1f,
-                                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                        )
-                                    }
-                                    .background(MaterialTheme.cardItem, CircleShape),
-                                alignment = Alignment.Center,
-                                contentDescription = "",
-                                contentScale = ContentScale.Crop,
-                            )
-                        }
-                    }
+                    AsyncImage(
+                        model = model.getUserImage(),
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .size(iconSize)
+                            .background(MaterialTheme.cardItem),
+                        error = painterResource(R.drawable.account),
+                        alignment = Alignment.Center,
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop,
+                    )
+                }
+            }
+            item {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    AsyncImage(
+                        model = model.getUserImage(),
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .size(imageSize)
+                            .background(MaterialTheme.cardItem, CircleShape),
+                        error = painterResource(R.drawable.account),
+                        alignment = Alignment.Center,
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop,
+                    )
                 }
             }
             item {

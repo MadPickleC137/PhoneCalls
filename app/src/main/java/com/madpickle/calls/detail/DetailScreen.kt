@@ -41,7 +41,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import coil3.compose.AsyncImage
 import com.madpickle.calls.R
-import com.madpickle.calls.addContact.EditContactScreen
+import com.madpickle.calls.editContact.EditContactScreen
 import com.madpickle.calls.data.ContactDraft
 import com.madpickle.calls.ui.theme.ButtonElevation
 import com.madpickle.calls.ui.theme.CardItemShape

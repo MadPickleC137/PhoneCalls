@@ -22,7 +22,7 @@ import cafe.adriel.voyager.core.model.rememberScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.madpickle.calls.R
-import com.madpickle.calls.addContact.EditContactScreen
+import com.madpickle.calls.editContact.EditContactScreen
 import com.madpickle.calls.detail.DetailScreen
 import com.madpickle.calls.ui.theme.MainPaddingItems
 import com.madpickle.calls.ui.theme.PaddingItem
