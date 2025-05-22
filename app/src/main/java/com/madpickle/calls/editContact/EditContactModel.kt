@@ -57,6 +57,9 @@ class EditContactModel(
                     imagesBitmap.add(bitmap)
                 }
             }
+            if(userImage.value == null) {
+                userImage.value = imagesBitmap.first()
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -118,7 +121,7 @@ class EditContactModel(
                 listNumbers
             )
         } else {
-            updateContactUseCase(
+            isSuccess.value = updateContactUseCase(
                 draft.id,
                 username.value,
                 userImage.value,

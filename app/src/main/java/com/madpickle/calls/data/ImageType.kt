@@ -14,7 +14,7 @@ enum class ImageType {
 
 fun ImageType.getResByType(): Int {
     return when(this) {
-        ImageType.Default -> R.drawable.account
+        ImageType.Default -> R.drawable.user
         ImageType.Tiger -> R.drawable.tiger
         ImageType.Lion -> R.drawable.lion
         ImageType.Dog -> R.drawable.dog

@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import com.madpickle.calls.ui.theme.FabShape
 import com.madpickle.calls.ui.theme.Typography
-import com.madpickle.calls.ui.theme.cardItem
+import com.madpickle.calls.ui.theme.dialog
 import com.madpickle.calls.ui.theme.error
 import com.madpickle.calls.ui.theme.simCard
 import com.madpickle.calls.ui.theme.text
@@ -28,7 +28,7 @@ fun NativeDialog(
 ) {
     AlertDialog(
         modifier = Modifier.fillMaxWidth(),
-        backgroundColor = MaterialTheme.cardItem,
+        backgroundColor = MaterialTheme.dialog,
         shape = FabShape,
         properties = DialogProperties(
             dismissOnBackPress = true,

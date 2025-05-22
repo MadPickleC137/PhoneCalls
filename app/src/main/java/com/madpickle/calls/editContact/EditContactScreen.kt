@@ -1,6 +1,8 @@
 package com.madpickle.calls.editContact
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,8 +34,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -56,6 +59,7 @@ import com.madpickle.calls.ui.theme.ContentPadding
 import com.madpickle.calls.ui.theme.FontLargeSize
 import com.madpickle.calls.ui.theme.IconSize
 import com.madpickle.calls.ui.theme.PaddingItem
+import com.madpickle.calls.ui.theme.blue
 import com.madpickle.calls.ui.theme.cardItem
 import com.madpickle.calls.ui.theme.error
 import com.madpickle.calls.ui.theme.simCard
@@ -69,7 +73,7 @@ import es.dmoral.toasty.Toasty
 class EditContactScreen(
     private val draft: ContactDraft? = null,
 ) : Screen {
-    private val iconSize = 50.dp
+    private val iconSize = 60.dp
     private val imageSize = 144.dp
     private val mask = MaskVisualTransformation("+# (###) ###-##-##")
 
@@ -84,34 +88,47 @@ class EditContactScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = PaddingValues(ContentPadding)
         ) {
-            items(model.getImages()) { bitmap ->
-                OutlinedButton(onClick = {
-                    model.setUserImage(bitmap)
-                },
-                    contentPadding = PaddingValues(),
-                    modifier = Modifier.size(iconSize).background(MaterialTheme.cardItem, CircleShape),
-                    shape = CircleShape,
-                    elevation = ButtonElevation,
-                    border =  ButtonDefaults.outlinedBorder.copy(
-                        width = if(model.isSelectedBitmap(bitmap)) 1.dp else 0.dp,
-                        brush = Brush.sweepGradient(listOf(MaterialTheme.simCard))
-                    ),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        backgroundColor = MaterialTheme.cardItem,
-                        contentColor = MaterialTheme.cardItem
-                    )
+            item {
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(iconSize),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(PaddingItem)
                 ) {
-                    AsyncImage(
-                        model = model.getUserImage(),
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .size(iconSize)
-                            .background(MaterialTheme.cardItem),
-                        error = painterResource(R.drawable.account),
-                        alignment = Alignment.Center,
-                        contentDescription = "",
-                        contentScale = ContentScale.Crop,
-                    )
+                    items(model.getImages()) { bitmap ->
+                        val isSelected = model.isSelectedBitmap(bitmap)
+                        OutlinedButton(
+                            onClick = {
+                                model.setUserImage(bitmap)
+                            },
+                            contentPadding = PaddingValues(),
+                            modifier = Modifier
+                                .size(iconSize)
+                                .background(MaterialTheme.cardItem, CircleShape),
+                            shape = CircleShape,
+                            elevation = ButtonElevation,
+                            border = BorderStroke(
+                                if (isSelected) 3.dp else 0.dp,
+                                if (isSelected) MaterialTheme.blue else Color.Transparent,
+                            ),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                backgroundColor = MaterialTheme.cardItem,
+                                contentColor = MaterialTheme.cardItem
+                            )
+                        ) {
+                            Image(
+                                bitmap = bitmap.asImageBitmap(),
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .size(iconSize)
+                                    .background(MaterialTheme.cardItem),
+                                alignment = Alignment.Center,
+                                contentDescription = "",
+                                contentScale = ContentScale.Crop,
+                            )
+                        }
+                    }
                 }
             }
             item {
@@ -126,7 +143,7 @@ class EditContactScreen(
                             .clip(CircleShape)
                             .size(imageSize)
                             .background(MaterialTheme.cardItem, CircleShape),
-                        error = painterResource(R.drawable.account),
+                        error = painterResource(R.drawable.user),
                         alignment = Alignment.Center,
                         contentDescription = "",
                         contentScale = ContentScale.Crop,

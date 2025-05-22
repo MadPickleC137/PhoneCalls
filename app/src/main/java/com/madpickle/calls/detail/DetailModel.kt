@@ -45,7 +45,7 @@ class DetailModel(
         detail.value = ContactDetail(
             name = contact.displayNamePrimary ?: contact.displayNameAlt ?: "",
             imageProfile = bitmap,
-            imageUri = contact.photoThumbnailUri,
+            imageUri = contact.photoUri,
             numbers = contact.phoneList().mapNotNull { it.normalizedNumber },
             id = id,
             sectionsLogs = calls
